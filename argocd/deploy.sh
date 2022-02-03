@@ -21,6 +21,8 @@ argocd(){
   local CLIENT_SECRET=$(terraform output -raw -state=$TF_STATE client-secret)
 
   cat <<EOF > ../.temp/argocd.yaml
+dex:
+  enabled: false
 redis:
   enabled: true
 redis-ha:
