@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.min.io
+    chart: minio
+    targetRevision: '*'
+    helm:
+      values: |
+        mode: standalone
+        persistence:
+          enabled: true
+          size: 500M
+        resources: null
+        rootUser: root
+        rootPassword: root1234
+        consoleIngress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: nginx
+          path: /
+          hosts:
+            - minio.kind.cluster
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: minio
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - PruneLast=true
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true

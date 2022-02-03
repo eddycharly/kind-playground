@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: '*'
+    chart: metrics-server
+    helm:
+      values: |
+        extraArgs:
+          kubelet-insecure-tls: true
+        apiService:
+          create: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - PruneLast=true
+      - ApplyOutOfSyncOnly=true
+    automated:
+      prune: true
+      selfHeal: true

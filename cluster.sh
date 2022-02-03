@@ -162,21 +162,15 @@ cleanup(){
   sudo rm -f /etc/dnsmasq.d/$DNSMASQ_CONF
 }
 
-# INIT
+# RUN
 
 cleanup
-
-# CORE
-
 network
 proxies
 cluster
 cilium
 metallb
 ingress
-
-# SYSTEM
-
 dnsmasq
 restart_service   dnsmasq
 
@@ -184,4 +178,4 @@ restart_service   dnsmasq
 
 log "CLUSTER READY !"
 
-echo "HUBBLE UI : http://hubble-ui.$DNSMASQ_DOMAIN"
+echo "HUBBLE UI: http://hubble-ui.$DNSMASQ_DOMAIN"
