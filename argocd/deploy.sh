@@ -20,7 +20,7 @@ argocd(){
 
   local CLIENT_SECRET=$(terraform output -raw -state=$TF_STATE client-secret)
 
-  helm upgrade --install --wait --atomic --namespace argocd --create-namespace  --repo https://argoproj.github.io/argo-helm argocd argo-cd --values - <<EOF
+  cat <<EOF > ../.temp/argocd.yaml
 redis:
   enabled: true
 redis-ha:
@@ -56,6 +56,8 @@ server:
     hosts:
       - argocd.$DNSMASQ_DOMAIN
 EOF
+
+  helm upgrade --install --wait --atomic --namespace argocd --create-namespace --repo https://argoproj.github.io/argo-helm argocd argo-cd --values ../.temp/argocd.yaml
 }
 
 # RUN

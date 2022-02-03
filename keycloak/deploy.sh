@@ -18,7 +18,7 @@ log(){
 keycloak(){
   log "KEYCLOAK ..."
 
-  helm upgrade --install --wait --atomic --namespace keycloak --create-namespace --repo https://codecentric.github.io/helm-charts keycloak keycloak --values - <<EOF
+  cat <<EOF > ../.temp/keycloak.yaml
 extraEnv: |
   - name: KEYCLOAK_USER
     value: admin
@@ -35,6 +35,8 @@ ingress:
           pathType: Prefix
   tls: null
 EOF
+
+  helm upgrade --install --wait --atomic --namespace keycloak --create-namespace --repo https://codecentric.github.io/helm-charts keycloak keycloak --values ../.temp/keycloak.yaml
 }
 
 keycloak_config(){
@@ -46,6 +48,7 @@ keycloak_config(){
 cleanup(){
   log "CLEANUP ..."
 
+  terraform init && terraform destroy -auto-approve -state=$TF_STATE || true
   rm -f $TF_STATE
   rm -f .terraform.lock.hcl
   rm -rf .terraform

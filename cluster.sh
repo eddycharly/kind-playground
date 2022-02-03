@@ -52,7 +52,7 @@ subnet_to_ip(){
 cluster(){
   log "CLUSTER ..."
 
-  kind create cluster --image $KIND_NODE_IMAGE --config - <<EOF
+  cat <<EOF > .temp/kind.yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 networking:
@@ -79,12 +79,14 @@ nodes:
 - role: worker
 - role: worker
 EOF
+
+  kind create cluster --image $KIND_NODE_IMAGE --config .temp/kind.yaml
 }
 
 cilium(){
   log "CILIUM ..."
 
-  helm upgrade --install --wait --atomic --namespace kube-system --repo https://helm.cilium.io cilium cilium --values - <<EOF
+  cat <<EOF > .temp/cilium.yaml
 kubeProxyReplacement: strict
 k8sServiceHost: kind-external-load-balancer
 k8sServicePort: 6443
@@ -113,6 +115,9 @@ hubble:
       hosts:
         - hubble-ui.$DNSMASQ_DOMAIN
 EOF
+
+  helm upgrade --install --wait --atomic --namespace kube-system --repo https://helm.cilium.io cilium cilium --values .temp/cilium.yaml
+
 }
 
 metallb(){
@@ -122,7 +127,7 @@ metallb(){
   local METALLB_START=$(subnet_to_ip $KIND_SUBNET 255.200)
   local METALLB_END=$(subnet_to_ip $KIND_SUBNET 255.250)
 
-  helm upgrade --install --wait --atomic --namespace metallb-system --create-namespace --repo https://metallb.github.io/metallb metallb metallb --values - <<EOF
+  cat <<EOF > .temp/metallb.yaml
 configInline:
   address-pools:
   - name: default
@@ -130,15 +135,19 @@ configInline:
     addresses:
     - $METALLB_START-$METALLB_END
 EOF
+
+  helm upgrade --install --wait --atomic --namespace metallb-system --create-namespace --repo https://metallb.github.io/metallb metallb metallb --values .temp/metallb.yaml
 }
 
 ingress(){
   log "INGRESS-NGINX ..."
 
-  helm upgrade --install --wait --atomic --namespace ingress-nginx --create-namespace --repo https://kubernetes.github.io/ingress-nginx ingress-nginx ingress-nginx --values - <<EOF
+  cat <<EOF > .temp/ingress-nginx.yaml
 defaultBackend:
   enabled: true
 EOF
+
+  helm upgrade --install --wait --atomic --namespace ingress-nginx --create-namespace --repo https://kubernetes.github.io/ingress-nginx ingress-nginx ingress-nginx --values .temp/ingress-nginx.yaml
 }
 
 dnsmasq(){
