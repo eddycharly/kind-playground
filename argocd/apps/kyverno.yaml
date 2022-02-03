@@ -1,29 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: metrics-server
+  name: kyverno
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://charts.bitnami.com/bitnami
-    chart: metrics-server
+    repoURL: https://kyverno.github.io/kyverno
+    chart: kyverno
     targetRevision: '*'
-    helm:
-      values: |
-        extraArgs:
-          kubelet-insecure-tls: true
-        apiService:
-          create: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: kube-system
+    namespace: kyverno
   revisionHistoryLimit: 3
   syncPolicy:
     syncOptions:
       - PruneLast=true
       - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
     automated:
       prune: true
       selfHeal: true

@@ -49,7 +49,6 @@ gitops keycloak       https://codecentric.github.io/helm-charts   keycloak      
 gitops argocd         https://argoproj.github.io/argo-helm        argo-cd         argocd
 
 kubectl apply -n argocd -f argocd/apps
-
-# DONE
+kubectl apply --recursive -f manifests
 
 log "CLUSTER READY !"
