@@ -27,9 +27,9 @@ $(sed -e 's/^/        /' .temp/$1.yaml)
   revisionHistoryLimit: 3
   syncPolicy:
     syncOptions:
-      - PruneLast=true
       - ApplyOutOfSyncOnly=true
       - CreateNamespace=true
+      - PruneLast=true
     automated:
       prune: true
       selfHeal: true
@@ -48,7 +48,7 @@ gitops ingress-nginx  https://kubernetes.github.io/ingress-nginx  ingress-nginx 
 gitops keycloak       https://codecentric.github.io/helm-charts   keycloak        keycloak
 gitops argocd         https://argoproj.github.io/argo-helm        argo-cd         argocd
 
-kubectl apply -n argocd -f argocd/apps
+kubectl apply --recursive -n argocd -f argocd/apps
 kubectl apply --recursive -f manifests
 
 log "CLUSTER READY !"

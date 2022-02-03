@@ -16,9 +16,9 @@ spec:
   revisionHistoryLimit: 3
   syncPolicy:
     syncOptions:
-      - PruneLast=true
       - ApplyOutOfSyncOnly=true
       - CreateNamespace=true
+      - PruneLast=true
     automated:
       prune: true
       selfHeal: true

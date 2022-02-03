@@ -116,7 +116,7 @@ hubble:
         - hubble-ui.$DNSMASQ_DOMAIN
 EOF
 
-  helm upgrade --install --wait --atomic --namespace kube-system --repo https://helm.cilium.io cilium cilium --values .temp/cilium.yaml
+  helm upgrade --install --wait --timeout 15m --atomic --namespace kube-system --repo https://helm.cilium.io cilium cilium --values .temp/cilium.yaml
 
 }
 
@@ -136,7 +136,7 @@ configInline:
     - $METALLB_START-$METALLB_END
 EOF
 
-  helm upgrade --install --wait --atomic --namespace metallb-system --create-namespace --repo https://metallb.github.io/metallb metallb metallb --values .temp/metallb.yaml
+  helm upgrade --install --wait --timeout 15m --atomic --namespace metallb-system --create-namespace --repo https://metallb.github.io/metallb metallb metallb --values .temp/metallb.yaml
 }
 
 ingress(){
@@ -147,7 +147,7 @@ defaultBackend:
   enabled: true
 EOF
 
-  helm upgrade --install --wait --atomic --namespace ingress-nginx --create-namespace --repo https://kubernetes.github.io/ingress-nginx ingress-nginx ingress-nginx --values .temp/ingress-nginx.yaml
+  helm upgrade --install --wait --timeout 15m --atomic --namespace ingress-nginx --create-namespace --repo https://kubernetes.github.io/ingress-nginx ingress-nginx ingress-nginx --values .temp/ingress-nginx.yaml
 }
 
 dnsmasq(){

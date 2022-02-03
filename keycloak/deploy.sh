@@ -36,7 +36,7 @@ ingress:
   tls: null
 EOF
 
-  helm upgrade --install --wait --atomic --namespace keycloak --create-namespace --repo https://codecentric.github.io/helm-charts keycloak keycloak --values ../.temp/keycloak.yaml
+  helm upgrade --install --wait --timeout 15m --atomic --namespace keycloak --create-namespace --repo https://codecentric.github.io/helm-charts keycloak keycloak --values ../.temp/keycloak.yaml
 }
 
 keycloak_config(){
