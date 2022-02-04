@@ -5,7 +5,6 @@ set -e
 # CONSTANTS
 
 readonly DNSMASQ_DOMAIN=kind.cluster
-readonly TF_STATE=../.tf-state/keycloak.tfstate
 
 # FUNCTIONS
 
@@ -17,8 +16,6 @@ log(){
 
 argocd(){
   log "ARGOCD ..."
-
-  local CLIENT_SECRET=$(terraform output -raw -state=$TF_STATE client-secret)
 
   cat <<EOF > ../.temp/argocd.yaml
 dex:
@@ -39,11 +36,13 @@ server:
           - CiliumIdentity
         clusters:
           - '*'
+    resource.compareoptions: |
+      ignoreResourceStatusField: all
     oidc.config: |
       name: Keycloak
       issuer: http://keycloak.$DNSMASQ_DOMAIN/auth/realms/master
       clientID: argocd
-      clientSecret: $CLIENT_SECRET
+      clientSecret: argocd-client-secret
       requestedScopes: ['openid', 'profile', 'email', 'groups']
   rbacConfig:
     policy.default: role:readonly

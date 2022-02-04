@@ -58,6 +58,19 @@ apiVersion: kind.x-k8s.io/v1alpha4
 networking:
   disableDefaultCNI: true
   kubeProxyMode: none
+kubeadmConfigPatches:
+- |-
+  kind: ClusterConfiguration
+  controllerManager:
+    extraArgs:
+      bind-address: 0.0.0.0
+  etcd:
+    local:
+      extraArgs:
+        listen-metrics-urls: http://0.0.0.0:54321
+  scheduler:
+    extraArgs:
+      bind-address: 0.0.0.0
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]

@@ -29,6 +29,7 @@ $(sed -e 's/^/        /' .temp/$1.yaml)
     syncOptions:
       - ApplyOutOfSyncOnly=true
       - CreateNamespace=true
+      - FailOnSharedResource=true
       - PruneLast=true
     automated:
       prune: true

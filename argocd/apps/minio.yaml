@@ -33,6 +33,7 @@ spec:
     syncOptions:
       - ApplyOutOfSyncOnly=true
       - CreateNamespace=true
+      - FailOnSharedResource=true
       - PruneLast=true
     automated:
       prune: true
