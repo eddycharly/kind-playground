@@ -40,3 +40,5 @@ Run `kubectl -n argocd -f ./argocd/apps/<application name>` to deploy an applica
 Available applications:
 - [metrics-server](./argocd/apps/metrics-server.yaml)
 - [minio](./argocd/apps/minio.yaml)
+- [kyverno](./argocd/apps/kyverno.yaml)
+- [kube-prometheus-stack](./argocd/apps/kube-prometheus-stack.yaml)

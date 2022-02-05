@@ -17,15 +17,30 @@ log(){
 }
 
 network(){
-  log "NETWORK ..."
+  local NAME=${1:-kind}
 
-  docker network create kind || true
+  log "NETWORK (kind) ..."
+
+  if [ -z $(docker network ls --filter name=^$NAME$ --format="{{ .Name }}") ]
+  then 
+    docker network create $NAME
+    echo "Network $NAME created"
+  else
+    echo "Network $NAME already exists, skipping"
+  fi
 }
 
 proxy(){
-  echo "$1 -> $2 ..."
+  local NAME=$1
+  local TARGET=$2
 
-  docker run -d --name $1 --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=$2 registry:2 || true
+  if [ -z $(docker ps --filter name=^proxy-gcr$ --format="{{ .Names }}") ]
+  then
+    docker run -d --name $NAME --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=$TARGET registry:2
+    echo "Proxy $NAME (-> $TARGET) created"
+  else
+    echo "Proxy $NAME already exists, skipping"
+  fi
 }
 
 proxies(){
@@ -50,6 +65,8 @@ subnet_to_ip(){
 }
 
 cluster(){
+  local NAME=${1:-kind}
+
   log "CLUSTER ..."
 
   cat <<EOF > .temp/kind.yaml
@@ -93,7 +110,7 @@ nodes:
 - role: worker
 EOF
 
-  kind create cluster --image $KIND_NODE_IMAGE --config .temp/kind.yaml
+  kind create cluster --name $NAME --image $KIND_NODE_IMAGE --config .temp/kind.yaml
 }
 
 cilium(){
@@ -130,7 +147,6 @@ hubble:
 EOF
 
   helm upgrade --install --wait --timeout 15m --atomic --namespace kube-system --repo https://helm.cilium.io cilium cilium --values .temp/cilium.yaml
-
 }
 
 metallb(){
