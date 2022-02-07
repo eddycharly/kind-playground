@@ -9,6 +9,8 @@ other tools.
 The [cluster.sh](./cluster.sh) script will bootstrap a local cluster with Kind and configure it
 to use Cilium CNI (without `kube-proxy`), MetalLB, ingress-nginx and dnsmasq.
 
+The cluster api server will be configured to use Keycloak identity provider.
+
 It will also setup docker image caching through proxies for docker.io, quay.io,
 gcr.io and k8s.gcr.io.
 
@@ -16,29 +18,32 @@ Run `./cluster.sh` to create a local cluster.
 
 ## Keycloak
 
-The [keycloak](./keycloak) folder contains code to deploy Keycloak in a running cluster.
+The [keycloak.sh](./keycloak.sh) script contains code to deploy Keycloak in a running cluster.
 
 In addition to deploying Keycloak, it will also configure it using terraform
-to be ready to use with ArgoCD and SSO authentication.
+to be ready to use with ArgoCD and other applications for SSO authentication.
 
-Run `cd keycloak && ./deploy.sh && cd -` to deploy and configure Keycloak.
+Keycloak will be available through HTTPS, using a certificate that is trusted by the cluster
+api server.
+
+Run `./keycloak.sh` to deploy and configure Keycloak.
 
 ## ArgoCD
 
-The [argocd](./argocd) folder contains code to deploy ArgoCD in a running cluster.
+The [argocd.sh](./argocd.sh) script contains code to deploy ArgoCD in a running cluster.
 
 ArgoCD will be configured to use Keycloak OIDC endpoint and SSO authentication.
 
-Run `cd argocd && ./deploy.sh && cd -` to deploy ArgoCD.
+Run `./argocd.sh` to deploy ArgoCD.
 
 ## ArgoCD applications
 
-The [argocd/apps](./argocd/apps) folder contains code ArgoCD application manifests.
+The [argocd](./argocd) folder contains code ArgoCD application manifests.
 
-Run `kubectl -n argocd -f ./argocd/apps/<application name>` to deploy an application.
+Run `kubectl -n argocd -f ./argocd/<application name>` to deploy an application.
 
 Available applications:
-- [metrics-server](./argocd/apps/metrics-server.yaml)
-- [minio](./argocd/apps/minio.yaml)
-- [kyverno](./argocd/apps/kyverno.yaml)
-- [kube-prometheus-stack](./argocd/apps/kube-prometheus-stack.yaml)
+- [metrics-server](./argocd/metrics-server.yaml)
+- [minio](./argocd/minio.yaml)
+- [kyverno](./argocd/kyverno.yaml)
+- [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)

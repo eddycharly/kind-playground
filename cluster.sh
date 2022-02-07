@@ -64,12 +64,27 @@ subnet_to_ip(){
   echo $1 | sed "s@0.0/16@$2@"
 }
 
+root_ca(){
+  log "ROOT CERTIFICATE ..."
+
+  mkdir -p .ssl
+
+  if [[ -f ".ssl/root-ca.pem" && -f ".ssl/root-ca-key.pem" ]]
+  then
+    echo "Root certificate already exists, skipping"
+  else
+    openssl genrsa -out .ssl/root-ca-key.pem 2048
+    openssl req -x509 -new -nodes -key .ssl/root-ca-key.pem -days 3650 -sha256 -out .ssl/root-ca.pem -subj "/CN=kube-ca"
+    echo "Root certificate created"
+  fi
+}
+
 cluster(){
   local NAME=${1:-kind}
 
   log "CLUSTER ..."
 
-  cat <<EOF > .temp/kind.yaml
+  kind create cluster --name $NAME --image $KIND_NODE_IMAGE --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 networking:
@@ -78,13 +93,20 @@ networking:
 kubeadmConfigPatches:
 - |-
   kind: ClusterConfiguration
+  apiServer:
+    extraArgs:
+      oidc-client-id: kube
+      oidc-issuer-url: https://keycloak.kind.cluster/auth/realms/master
+      oidc-username-claim: email
+      oidc-groups-claim: groups
+      oidc-ca-file: /etc/ca-certificates/keycloak/root-ca.pem
   controllerManager:
     extraArgs:
       bind-address: 0.0.0.0
   etcd:
     local:
       extraArgs:
-        listen-metrics-urls: http://0.0.0.0:54321
+        listen-metrics-urls: http://0.0.0.0:2381
   scheduler:
     extraArgs:
       bind-address: 0.0.0.0
@@ -103,20 +125,31 @@ containerdConfigPatches:
     endpoint = ["http://proxy-gcr:5000"]
 nodes:
 - role: control-plane
+  extraMounts:
+  - hostPath: $PWD/.ssl/root-ca.pem
+    containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+    readOnly: true
 - role: control-plane
+  extraMounts:
+  - hostPath: $PWD/.ssl/root-ca.pem
+    containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+    readOnly: true
 - role: control-plane
+  extraMounts:
+  - hostPath: $PWD/.ssl/root-ca.pem
+    containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+    readOnly: true
 - role: worker
 - role: worker
 - role: worker
 EOF
-
-  kind create cluster --name $NAME --image $KIND_NODE_IMAGE --config .temp/kind.yaml
 }
 
 cilium(){
   log "CILIUM ..."
 
-  cat <<EOF > .temp/cilium.yaml
+  helm upgrade --install --wait --timeout 15m --atomic --namespace kube-system --create-namespace \
+    --repo https://helm.cilium.io cilium cilium --values - <<EOF
 kubeProxyReplacement: strict
 k8sServiceHost: kind-external-load-balancer
 k8sServicePort: 6443
@@ -145,8 +178,6 @@ hubble:
       hosts:
         - hubble-ui.$DNSMASQ_DOMAIN
 EOF
-
-  helm upgrade --install --wait --timeout 15m --atomic --namespace kube-system --repo https://helm.cilium.io cilium cilium --values .temp/cilium.yaml
 }
 
 metallb(){
@@ -156,7 +187,8 @@ metallb(){
   local METALLB_START=$(subnet_to_ip $KIND_SUBNET 255.200)
   local METALLB_END=$(subnet_to_ip $KIND_SUBNET 255.250)
 
-  cat <<EOF > .temp/metallb.yaml
+  helm upgrade --install --wait --timeout 15m --atomic --namespace metallb-system --create-namespace \
+    --repo https://metallb.github.io/metallb metallb metallb --values - <<EOF
 configInline:
   address-pools:
   - name: default
@@ -164,19 +196,16 @@ configInline:
     addresses:
     - $METALLB_START-$METALLB_END
 EOF
-
-  helm upgrade --install --wait --timeout 15m --atomic --namespace metallb-system --create-namespace --repo https://metallb.github.io/metallb metallb metallb --values .temp/metallb.yaml
 }
 
 ingress(){
   log "INGRESS-NGINX ..."
 
-  cat <<EOF > .temp/ingress-nginx.yaml
+  helm upgrade --install --wait --timeout 15m --atomic --namespace ingress-nginx --create-namespace \
+    --repo https://kubernetes.github.io/ingress-nginx ingress-nginx ingress-nginx --values - <<EOF
 defaultBackend:
   enabled: true
 EOF
-
-  helm upgrade --install --wait --timeout 15m --atomic --namespace ingress-nginx --create-namespace --repo https://kubernetes.github.io/ingress-nginx ingress-nginx ingress-nginx --values .temp/ingress-nginx.yaml
 }
 
 dnsmasq(){
@@ -205,6 +234,7 @@ cleanup(){
 cleanup
 network
 proxies
+root_ca
 cluster
 cilium
 metallb

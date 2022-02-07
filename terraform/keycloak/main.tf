@@ -9,18 +9,19 @@ terraform {
 
 # configure keycloak provider
 provider "keycloak" {
-  client_id = "admin-cli"
-  username  = "admin"
-  password  = "admin"
-  url       = "http://keycloak.kind.cluster"
+  client_id                = "admin-cli"
+  username                 = "admin"
+  password                 = "admin"
+  url                      = "https://keycloak.kind.cluster"
+  tls_insecure_skip_verify = true
 }
 
 locals {
   realm_id = "master"
-  groups   = ["argocd-dev", "argocd-admin", "grafana-dev", "grafana-admin"]
+  groups   = ["argocd-dev", "argocd-admin", "grafana-dev", "grafana-admin", "kube-dev", "kube-admin"]
   user_groups = {
-    user-dev       = ["argocd-dev", "grafana-dev"]
-    user-admin     = ["argocd-admin", "grafana-admin"]
+    user-dev   = ["argocd-dev", "grafana-dev", "kube-dev"]
+    user-admin = ["argocd-admin", "grafana-admin", "kube-admin"]
   }
 }
 
@@ -33,13 +34,14 @@ resource "keycloak_group" "groups" {
 
 # create users
 resource "keycloak_user" "users" {
-  for_each   = local.user_groups
-  realm_id   = local.realm_id
-  username   = each.key
-  enabled    = true
-  email      = "${each.key}@domain.com"
-  first_name = each.key
-  last_name  = each.key
+  for_each       = local.user_groups
+  realm_id       = local.realm_id
+  username       = each.key
+  enabled        = true
+  email          = "${each.key}@domain.com"
+  email_verified = true
+  first_name     = each.key
+  last_name      = each.key
 
   initial_password {
     value = each.key

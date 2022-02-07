@@ -1,4 +1,4 @@
+.ssl
 .tf-state
-.temp/*.yaml
-keycloak/.terraform.lock.hcl
-keycloak/.terraform
+.terraform.lock.hcl
+.terraform

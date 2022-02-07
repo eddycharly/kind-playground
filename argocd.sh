@@ -17,7 +17,8 @@ log(){
 argocd(){
   log "ARGOCD ..."
 
-  cat <<EOF > ../.temp/argocd.yaml
+  helm upgrade --install --wait --timeout 15m --atomic --namespace argocd --create-namespace \
+    --repo https://argoproj.github.io/argo-helm argocd argo-cd --values - <<EOF
 dex:
   enabled: false
 redis:
@@ -57,8 +58,6 @@ server:
     hosts:
       - argocd.$DNSMASQ_DOMAIN
 EOF
-
-  helm upgrade --install --wait --timeout 15m --atomic --namespace argocd --create-namespace --repo https://argoproj.github.io/argo-helm argocd argo-cd --values ../.temp/argocd.yaml
 }
 
 # RUN
