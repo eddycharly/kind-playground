@@ -19,12 +19,15 @@ spec:
         resources: null
         rootUser: root
         rootPassword: root1234
+        metrics:
+          serviceMonitor:
+            enabled: true
         consoleIngress:
           enabled: true
           annotations:
             kubernetes.io/ingress.class: nginx
           hosts:
-          - minio.kind.cluster
+            - minio.kind.cluster
   destination:
     server: https://kubernetes.default.svc
     namespace: minio

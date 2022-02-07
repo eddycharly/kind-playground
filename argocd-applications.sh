@@ -28,19 +28,29 @@ defaultRules:
   rules:
     kubeProxy: false
 alertmanager:
+  alertmanagerSpec:
+    alertmanagerConfigSelector:
+      matchLabels: {}
+    alertmanagerConfigNamespaceSelector:
+      matchLabels: {}
   ingress:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx
     hosts:
-    - alertmanager.kind.cluster
+      - alertmanager.kind.cluster
 prometheus:
+  prometheusSpec:
+    ruleSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
   ingress:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx
     hosts:
-    - prometheus.kind.cluster
+      - prometheus.kind.cluster
 grafana:
   enabled: true
   adminPassword: admin
@@ -73,7 +83,7 @@ grafana:
     annotations:
       kubernetes.io/ingress.class: nginx
     hosts:
-    - grafana.kind.cluster
+      - grafana.kind.cluster
 EOF
 
 deploy cilium

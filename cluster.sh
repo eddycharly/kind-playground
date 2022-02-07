@@ -113,57 +113,57 @@ networking:
   disableDefaultCNI: true
   kubeProxyMode: none
 kubeadmConfigPatches:
-- |-
-  kind: ClusterConfiguration
-  apiServer:
-    extraArgs:
-      oidc-client-id: kube
-      oidc-issuer-url: https://keycloak.kind.cluster/auth/realms/master
-      oidc-username-claim: email
-      oidc-groups-claim: groups
-      oidc-ca-file: /etc/ca-certificates/keycloak/root-ca.pem
-  controllerManager:
-    extraArgs:
-      bind-address: 0.0.0.0
-  etcd:
-    local:
+  - |-
+    kind: ClusterConfiguration
+    apiServer:
       extraArgs:
-        listen-metrics-urls: http://0.0.0.0:2381
-  scheduler:
-    extraArgs:
-      bind-address: 0.0.0.0
+        oidc-client-id: kube
+        oidc-issuer-url: https://keycloak.kind.cluster/auth/realms/master
+        oidc-username-claim: email
+        oidc-groups-claim: groups
+        oidc-ca-file: /etc/ca-certificates/keycloak/root-ca.pem
+    controllerManager:
+      extraArgs:
+        bind-address: 0.0.0.0
+    etcd:
+      local:
+        extraArgs:
+          listen-metrics-urls: http://0.0.0.0:2381
+    scheduler:
+      extraArgs:
+        bind-address: 0.0.0.0
 containerdConfigPatches:
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-    endpoint = ["http://proxy-docker-hub:5000"]
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
-    endpoint = ["http://proxy-quay:5000"]
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."k8s.gcr.io"]
-    endpoint = ["http://proxy-k8s-gcr:5000"]
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
-    endpoint = ["http://proxy-gcr:5000"]
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+      endpoint = ["http://proxy-docker-hub:5000"]
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
+      endpoint = ["http://proxy-quay:5000"]
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."k8s.gcr.io"]
+      endpoint = ["http://proxy-k8s-gcr:5000"]
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
+      endpoint = ["http://proxy-gcr:5000"]
 nodes:
-- role: control-plane
-  extraMounts:
-  - hostPath: $PWD/.ssl/root-ca.pem
-    containerPath: /etc/ca-certificates/keycloak/root-ca.pem
-    readOnly: true
-- role: control-plane
-  extraMounts:
-  - hostPath: $PWD/.ssl/root-ca.pem
-    containerPath: /etc/ca-certificates/keycloak/root-ca.pem
-    readOnly: true
-- role: control-plane
-  extraMounts:
-  - hostPath: $PWD/.ssl/root-ca.pem
-    containerPath: /etc/ca-certificates/keycloak/root-ca.pem
-    readOnly: true
-- role: worker
-- role: worker
-- role: worker
+  - role: control-plane
+    extraMounts:
+      - hostPath: $PWD/.ssl/root-ca.pem
+        containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+        readOnly: true
+  - role: control-plane
+    extraMounts:
+      - hostPath: $PWD/.ssl/root-ca.pem
+        containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+        readOnly: true
+  - role: control-plane
+    extraMounts:
+      - hostPath: $PWD/.ssl/root-ca.pem
+        containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+        readOnly: true
+  - role: worker
+  - role: worker
+  - role: worker
 EOF
 }
 
@@ -198,7 +198,7 @@ hubble:
       annotations:
         kubernetes.io/ingress.class: nginx
       hosts:
-      - hubble-ui.$DNSMASQ_DOMAIN
+        - hubble-ui.$DNSMASQ_DOMAIN
 EOF
 }
 
@@ -213,10 +213,10 @@ metallb(){
     --repo https://metallb.github.io/metallb metallb metallb --values - <<EOF
 configInline:
   address-pools:
-  - name: default
-    protocol: layer2
-    addresses:
-    - $METALLB_START-$METALLB_END
+    - name: default
+      protocol: layer2
+      addresses:
+        - $METALLB_START-$METALLB_END
 EOF
 }
 

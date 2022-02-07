@@ -35,9 +35,9 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
   tls: true
   extraTls:
-  - hosts:
-    - keycloak.kind.cluster
-    secretName: keycloak.kind.cluster-tls
+    - hosts:
+        - keycloak.kind.cluster
+      secretName: keycloak.kind.cluster-tls
 postgresql:
   enabled: true
   postgresqlPassword: password
@@ -102,9 +102,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: kube-admin
 subjects:
-- kind: Group
-  name: kube-admin
-  apiGroup: rbac.authorization.k8s.io
+  - kind: Group
+    name: kube-admin
+    apiGroup: rbac.authorization.k8s.io
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -117,9 +117,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: kube-dev
 subjects:
-- kind: Group
-  name: kube-dev
-  apiGroup: rbac.authorization.k8s.io
+  - kind: Group
+    name: kube-dev
+    apiGroup: rbac.authorization.k8s.io
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

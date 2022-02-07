@@ -31,12 +31,12 @@ server:
     application.instanceLabelKey: argocd.argoproj.io/instance
     admin.enabled: 'false'
     resource.exclusions: |
-    - apiGroups:
-      - cilium.io
-      kinds:
-      - CiliumIdentity
-      clusters:
-      - '*'
+      - apiGroups:
+          - cilium.io
+        kinds:
+          - CiliumIdentity
+        clusters:
+          - '*'
     resource.compareoptions: |
       ignoreResourceStatusField: all
     oidc.config: |
@@ -50,13 +50,13 @@ server:
     policy.csv: |
       g, argocd-admin, role:admin
   extraArgs:
-  - --insecure
+    - --insecure
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
     enabled: true
     hosts:
-    - argocd.$DNSMASQ_DOMAIN
+      - argocd.$DNSMASQ_DOMAIN
 EOF
 }
 

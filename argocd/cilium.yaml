@@ -27,8 +27,27 @@ spec:
           pullPolicy: IfNotPresent
         ipam:
           mode: kubernetes
+        operator:
+          prometheus:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+        prometheus:
+          enabled: true
+          serviceMonitor:
+            enabled: true
         hubble:
           enabled: true
+          metrics:
+            enabled:
+              - dns:query;ignoreAAAA
+              - drop
+              - tcp
+              - flow
+              - icmp
+              - http
+            serviceMonitor:
+              enabled: true
           relay:
             enabled: true
           ui:
@@ -38,7 +57,7 @@ spec:
               annotations:
                 kubernetes.io/ingress.class: nginx
               hosts:
-              - hubble-ui.kind.cluster
+                - hubble-ui.kind.cluster
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system

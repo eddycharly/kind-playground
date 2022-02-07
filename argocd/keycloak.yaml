@@ -19,6 +19,10 @@ spec:
           managementUser: manager
           managementPassword: manager
         proxyAddressForwarding: true
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: true
         ingress:
           enabled: true
           hostname: keycloak.kind.cluster
@@ -28,12 +32,16 @@ spec:
           tls: true
           selfSigned: false
           extraTls:
-          - hosts:
-            - keycloak.kind.cluster
-            secretName: keycloak.kind.cluster-tls
+            - hosts:
+                - keycloak.kind.cluster
+              secretName: keycloak.kind.cluster-tls
         postgresql:
           enabled: true
           postgresqlPassword: password
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
   destination:
     server: https://kubernetes.default.svc
     namespace: keycloak
