@@ -43,6 +43,10 @@ The [argocd](./argocd) folder contains code ArgoCD application manifests.
 Run `kubectl -n argocd -f ./argocd/<application name>` to deploy an application.
 
 Available applications:
+- [argocd](./argocd/argocd.yaml)
+- [cilium](./argocd/cilium.yaml)
+- [ingress-nginx](./argocd/ingress-nginx.yaml)
+- [keycloak](./argocd/keycloak.yaml)
 - [metrics-server](./argocd/metrics-server.yaml)
 - [minio](./argocd/minio.yaml)
 - [kyverno](./argocd/kyverno.yaml)
