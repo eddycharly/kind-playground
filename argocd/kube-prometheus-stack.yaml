@@ -15,7 +15,7 @@ spec:
         kubeEtcd:
           service:
             enabled: true
-            targetPort: 54321
+            targetPort: 2381
         kubeProxy:
           enabled: false
         defaultRules:
@@ -28,14 +28,14 @@ spec:
             annotations:
               kubernetes.io/ingress.class: nginx
             hosts:
-              - alertmanager.kind.cluster
+            - alertmanager.kind.cluster
         prometheus:
           ingress:
             enabled: true
             annotations:
               kubernetes.io/ingress.class: nginx
             hosts:
-              - prometheus.kind.cluster
+            - prometheus.kind.cluster
         grafana:
           enabled: true
           adminPassword: admin
@@ -68,7 +68,7 @@ spec:
             annotations:
               kubernetes.io/ingress.class: nginx
             hosts:
-              - grafana.kind.cluster
+            - grafana.kind.cluster
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

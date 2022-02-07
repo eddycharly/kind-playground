@@ -24,7 +24,7 @@ spec:
           annotations:
             kubernetes.io/ingress.class: nginx
           hosts:
-            - minio.kind.cluster
+          - minio.kind.cluster
   destination:
     server: https://kubernetes.default.svc
     namespace: minio

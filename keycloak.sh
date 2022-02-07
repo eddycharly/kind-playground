@@ -35,9 +35,9 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
   tls: true
   extraTls:
-    - hosts:
-        - keycloak.kind.cluster
-      secretName: keycloak.kind.cluster-tls
+  - hosts:
+    - keycloak.kind.cluster
+    secretName: keycloak.kind.cluster-tls
 postgresql:
   enabled: true
   postgresqlPassword: password

@@ -198,7 +198,7 @@ hubble:
       annotations:
         kubernetes.io/ingress.class: nginx
       hosts:
-        - hubble-ui.$DNSMASQ_DOMAIN
+      - hubble-ui.$DNSMASQ_DOMAIN
 EOF
 }
 
