@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: keycloak
+    targetRevision: '*'
+    helm:
+      values: |
+        auth:
+          createAdminUser: true
+          adminUser: admin
+          adminPassword: admin
+          managementUser: manager
+          managementPassword: manager
+        proxyAddressForwarding: true
+        ingress:
+          enabled: true
+          hostname: keycloak.kind.cluster
+          annotations:
+            kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+          tls: true
+          selfSigned: false
+          extraTls:
+            - hosts:
+                - keycloak.kind.cluster
+              secretName: keycloak.kind.cluster-tls
+        postgresql:
+          enabled: true
+          postgresqlPassword: password
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: keycloak
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true

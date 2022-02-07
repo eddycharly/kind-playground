@@ -32,6 +32,7 @@ ingress:
   hostname: keycloak.kind.cluster
   annotations:
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: 'false'
   tls: true
   selfSigned: false
   extraTls:

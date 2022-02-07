@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-cd
+    targetRevision: '*'
+    helm:
+      values: |
+        dex:
+          enabled: false
+        redis:
+          enabled: true
+        redis-ha:
+          enabled: false
+        server:
+          config:
+            url: http://argocd.kind.cluster
+            application.instanceLabelKey: argocd.argoproj.io/instance
+            admin.enabled: 'false'
+            resource.exclusions: |
+              - apiGroups:
+                  - cilium.io
+                kinds:
+                  - CiliumIdentity
+                clusters:
+                  - '*'
+            resource.compareoptions: |
+              ignoreResourceStatusField: all
+            oidc.config: |
+              name: Keycloak
+              issuer: http://keycloak.kind.cluster/auth/realms/master
+              clientID: argocd
+              clientSecret: argocd-client-secret
+              requestedScopes: ['openid', 'profile', 'email', 'groups']
+          rbacConfig:
+            policy.default: role:readonly
+            policy.csv: |
+              g, argocd-admin, role:admin
+          extraArgs:
+            - --insecure
+          ingress:
+            annotations:
+              kubernetes.io/ingress.class: nginx
+            enabled: true
+            hosts:
+              - argocd.kind.cluster
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true
