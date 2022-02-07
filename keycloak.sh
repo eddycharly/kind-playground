@@ -34,7 +34,6 @@ ingress:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
   tls: true
-  selfSigned: false
   extraTls:
     - hosts:
         - keycloak.kind.cluster
@@ -110,7 +109,9 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
----
+EOF
+
+  kubectl apply -f - <<EOF
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:

@@ -12,6 +12,7 @@ deploy(){
 
 # RUN
 
+deploy kube-prometheus-stack
 deploy cilium
 # deploy metallb
 deploy ingress-nginx
@@ -19,4 +20,3 @@ deploy keycloak
 deploy argocd
 deploy minio
 deploy metrics-server
-deploy kube-prometheus-stack
