@@ -51,3 +51,4 @@ Available applications:
 - [minio](./argocd/minio.yaml)
 - [kyverno](./argocd/kyverno.yaml)
 - [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)
+- [rbac-manager](./argocd/rbac-manager.yaml)

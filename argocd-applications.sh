@@ -93,3 +93,4 @@ deploy keycloak
 deploy argocd
 deploy minio
 deploy metrics-server
+deploy rbac-manager
