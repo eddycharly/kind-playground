@@ -52,3 +52,4 @@ Available applications:
 - [kyverno](./argocd/kyverno.yaml)
 - [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)
 - [rbac-manager](./argocd/rbac-manager.yaml)
+- [node-problem-detector](./argocd/node-problem-detector.yaml)
