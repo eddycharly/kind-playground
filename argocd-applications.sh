@@ -95,3 +95,4 @@ deploy minio
 deploy metrics-server
 deploy rbac-manager
 deploy node-problem-detector
+deploy polaris
