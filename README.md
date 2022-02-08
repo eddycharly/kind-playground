@@ -44,12 +44,14 @@ Run `kubectl -n argocd -f ./argocd/<application name>` to deploy an application.
 
 Available applications:
 - [argocd](./argocd/argocd.yaml)
+- [cert-manager](./argocd/cert-manager.yaml)
 - [cilium](./argocd/cilium.yaml)
 - [ingress-nginx](./argocd/ingress-nginx.yaml)
 - [keycloak](./argocd/keycloak.yaml)
+- [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)
+- [kyverno](./argocd/kyverno.yaml)
 - [metrics-server](./argocd/metrics-server.yaml)
 - [minio](./argocd/minio.yaml)
-- [kyverno](./argocd/kyverno.yaml)
-- [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)
-- [rbac-manager](./argocd/rbac-manager.yaml)
 - [node-problem-detector](./argocd/node-problem-detector.yaml)
+- [polaris](./argocd/polaris.yaml)
+- [rbac-manager](./argocd/rbac-manager.yaml)
