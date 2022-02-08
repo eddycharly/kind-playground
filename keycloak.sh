@@ -33,49 +33,12 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+    cert-manager.io/cluster-issuer: ca-issuer
   tls: true
-  extraTls:
-    - hosts:
-        - keycloak.kind.cluster
-      secretName: keycloak.kind.cluster-tls
 postgresql:
   enabled: true
   postgresqlPassword: password
 EOF
-}
-
-certificate(){
-  log "CERTIFICATE ..."
-
-  cat << EOF > .ssl/req.cnf
-[req]
-req_extensions = v3_req
-distinguished_name = req_distinguished_name
-
-[req_distinguished_name]
-
-[ v3_req ]
-basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-subjectAltName = @alt_names
-
-[alt_names]
-DNS.1 = keycloak.kind.cluster
-EOF
-
-  openssl genrsa -out .ssl/key.pem 2048
-
-  openssl req -new -key .ssl/key.pem -out .ssl/csr.pem \
-    -subj "/CN=kube-ca" \
-    -addext "subjectAltName = DNS:keycloak.kind.cluster" \
-    -sha256 -config .ssl/req.cnf
-
-  openssl x509 -req -in .ssl/csr.pem \
-    -CA .ssl/root-ca.pem -CAkey .ssl/root-ca-key.pem -CAcreateserial \
-    -sha256 -out .ssl/cert.pem -days 3650 -extensions v3_req -extfile .ssl/req.cnf
-
-  kubectl delete secret -n keycloak keycloak.kind.cluster-tls || true
-  kubectl create secret tls -n keycloak keycloak.kind.cluster-tls --cert=.ssl/cert.pem --key=.ssl/key.pem
 }
 
 keycloak_config(){
@@ -166,7 +129,6 @@ kubectl_config(){
 
 cleanup
 keycloak
-certificate
 keycloak_config
 rbac
 kubectl_config    user-admin

@@ -87,6 +87,7 @@ grafana:
 EOF
 
 deploy cilium
+deploy cert-manager
 # deploy metallb
 deploy ingress-nginx
 deploy keycloak

@@ -121,7 +121,6 @@ kubeadmConfigPatches:
         oidc-issuer-url: https://keycloak.kind.cluster/auth/realms/master
         oidc-username-claim: email
         oidc-groups-claim: groups
-        oidc-ca-file: /etc/ca-certificates/keycloak/root-ca.pem
     controllerManager:
       extraArgs:
         bind-address: 0.0.0.0
@@ -149,21 +148,33 @@ nodes:
   - role: control-plane
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+        containerPath: /etc/ssl/certs/local-root-ca.pem
         readOnly: true
   - role: control-plane
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+        containerPath: /etc/ssl/certs/local-root-ca.pem
         readOnly: true
   - role: control-plane
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ca-certificates/keycloak/root-ca.pem
+        containerPath: /etc/ssl/certs/local-root-ca.pem
         readOnly: true
   - role: worker
+    extraMounts:
+      - hostPath: $PWD/.ssl/root-ca.pem
+        containerPath: /etc/ssl/certs/local-root-ca.pem
+        readOnly: true
   - role: worker
+    extraMounts:
+      - hostPath: $PWD/.ssl/root-ca.pem
+        containerPath: /etc/ssl/certs/local-root-ca.pem
+        readOnly: true
   - role: worker
+    extraMounts:
+      - hostPath: $PWD/.ssl/root-ca.pem
+        containerPath: /etc/ssl/certs/local-root-ca.pem
+        readOnly: true
 EOF
 }
 
@@ -199,6 +210,32 @@ hubble:
         kubernetes.io/ingress.class: nginx
       hosts:
         - hubble-ui.$DNSMASQ_DOMAIN
+EOF
+}
+
+cert_manager(){
+  log "CERT MANAGER ..."
+
+  helm upgrade --install --wait --timeout 15m --atomic --namespace cert-manager --create-namespace \
+    --repo https://charts.jetstack.io cert-manager cert-manager --values - <<EOF
+installCRDs: true
+EOF
+}
+
+cert_manager_ca_secret(){
+  kubectl delete secret -n cert-manager root-ca || true
+  kubectl create secret tls -n cert-manager root-ca --cert=.ssl/root-ca.pem --key=.ssl/root-ca-key.pem
+}
+
+cert_manager_ca_issuer(){
+  kubectl apply -n cert-manager -f - <<EOF
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: ca-issuer
+spec:
+  ca:
+    secretName: root-ca
 EOF
 }
 
@@ -259,6 +296,9 @@ proxies
 root_ca
 cluster
 cilium
+cert_manager
+cert_manager_ca_secret
+cert_manager_ca_issuer
 metallb
 ingress
 dnsmasq
