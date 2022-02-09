@@ -33,12 +33,21 @@ spec:
             serviceMonitor:
               enabled: true
         server:
+          volumeMounts:
+            - mountPath: /etc/ssl/certs/root-ca.pem
+              name: opt-ca-certificates
+              readOnly: true
+          volumes:
+            - name: opt-ca-certificates
+              hostPath:
+                path: /opt/ca-certificates/root-ca.pem
+                type: File
           metrics:
             enabled: true
             serviceMonitor:
               enabled: true
           config:
-            url: http://argocd.kind.cluster
+            url: https://argocd.kind.cluster
             application.instanceLabelKey: argocd.argoproj.io/instance
             admin.enabled: 'false'
             resource.exclusions: |
@@ -52,7 +61,7 @@ spec:
               ignoreResourceStatusField: all
             oidc.config: |
               name: Keycloak
-              issuer: http://keycloak.kind.cluster/auth/realms/master
+              issuer: https://keycloak.kind.cluster/auth/realms/master
               clientID: argocd
               clientSecret: argocd-client-secret
               requestedScopes: ['openid', 'profile', 'email', 'groups']
@@ -65,9 +74,14 @@ spec:
           ingress:
             annotations:
               kubernetes.io/ingress.class: nginx
+              cert-manager.io/cluster-issuer: ca-issuer
             enabled: true
             hosts:
               - argocd.kind.cluster
+            tls:
+              - secretName: argocd.kind.cluster
+                hosts:
+                  - argocd.kind.cluster
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

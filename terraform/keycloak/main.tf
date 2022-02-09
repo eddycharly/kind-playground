@@ -13,7 +13,6 @@ provider "keycloak" {
   username                 = "admin"
   password                 = "admin"
   url                      = "https://keycloak.kind.cluster"
-  tls_insecure_skip_verify = true
 }
 
 locals {

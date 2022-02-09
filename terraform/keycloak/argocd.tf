@@ -7,7 +7,7 @@ resource "keycloak_openid_client" "argocd" {
   access_type           = "CONFIDENTIAL"
   client_secret         = "argocd-client-secret"
   standard_flow_enabled = true
-  valid_redirect_uris   = ["http://argocd.kind.cluster/auth/callback"]
+  valid_redirect_uris   = ["https://argocd.kind.cluster/auth/callback"]
 }
 
 # configure argocd openid client default scopes

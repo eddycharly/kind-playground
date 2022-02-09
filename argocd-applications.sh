@@ -37,8 +37,13 @@ alertmanager:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: ca-issuer
     hosts:
       - alertmanager.kind.cluster
+    tls:
+      - secretName: argalertmanagerocd.kind.cluster
+        hosts:
+          - alertmanager.kind.cluster
 prometheus:
   prometheusSpec:
     ruleSelectorNilUsesHelmValues: false
@@ -49,11 +54,22 @@ prometheus:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: ca-issuer
     hosts:
       - prometheus.kind.cluster
+    tls:
+      - secretName: prometheus.kind.cluster
+        hosts:
+          - prometheus.kind.cluster
 grafana:
   enabled: true
   adminPassword: admin
+  extraVolumeMounts:
+    - name: opt-ca-certificates
+      mountPath: /opt/ca-certificates
+      readOnly: true
+      hostPath: /opt/ca-certificates
+      hostPathType: Directory
   sidecar:
     enableUniqueFilenames: true
     dashboards:
@@ -66,24 +82,30 @@ grafana:
       searchNamespace: ALL
   grafana.ini:
     server:
-      root_url: http://grafana.kind.cluster
+      root_url: https://grafana.kind.cluster
     auth.generic_oauth:
       enabled: true
       name: Keycloak
       allow_sign_up: true
       scopes: profile,email,groups
-      auth_url: http://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/auth
-      token_url: http://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/token
-      api_url: http://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/userinfo
+      auth_url: https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/auth
+      token_url: https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/token
+      api_url: https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/userinfo
       client_id: grafana
       client_secret: grafana-client-secret
+      tls_client_ca: /opt/ca-certificates/root-ca.pem
       role_attribute_path: contains(groups[*], 'grafana-admin') && 'Admin' || contains(groups[*], 'grafana-dev') && 'Editor' || 'Viewer'
   ingress:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: ca-issuer
     hosts:
       - grafana.kind.cluster
+    tls:
+      - secretName: grafana.kind.cluster
+        hosts:
+          - grafana.kind.cluster
 EOF
 
 deploy cilium

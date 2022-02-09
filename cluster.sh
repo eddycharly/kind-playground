@@ -101,6 +101,16 @@ root_ca(){
   fi
 }
 
+install_ca(){
+  log "INSTALL CERTIFICATE AUTHORITY ..."
+
+  sudo mkdir -p /usr/local/share/ca-certificates/kind.cluster
+
+  sudo cp -f .ssl/root-ca.pem /usr/local/share/ca-certificates/kind.cluster/ca.crt
+
+  sudo update-ca-certificates
+}
+
 cluster(){
   local NAME=${1:-kind}
 
@@ -116,11 +126,18 @@ kubeadmConfigPatches:
   - |-
     kind: ClusterConfiguration
     apiServer:
+      extraVolumes:
+        - name: opt-ca-certificates
+          hostPath: /opt/ca-certificates/root-ca.pem
+          mountPath: /opt/ca-certificates/root-ca.pem
+          readOnly: true
+          pathType: File
       extraArgs:
         oidc-client-id: kube
         oidc-issuer-url: https://keycloak.kind.cluster/auth/realms/master
         oidc-username-claim: email
         oidc-groups-claim: groups
+        oidc-ca-file: /opt/ca-certificates/root-ca.pem
     controllerManager:
       extraArgs:
         bind-address: 0.0.0.0
@@ -148,32 +165,32 @@ nodes:
   - role: control-plane
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ssl/certs/local-root-ca.pem
+        containerPath: /opt/ca-certificates/root-ca.pem
         readOnly: true
   - role: control-plane
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ssl/certs/local-root-ca.pem
+        containerPath: /opt/ca-certificates/root-ca.pem
         readOnly: true
   - role: control-plane
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ssl/certs/local-root-ca.pem
+        containerPath: /opt/ca-certificates/root-ca.pem
         readOnly: true
   - role: worker
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ssl/certs/local-root-ca.pem
+        containerPath: /opt/ca-certificates/root-ca.pem
         readOnly: true
   - role: worker
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ssl/certs/local-root-ca.pem
+        containerPath: /opt/ca-certificates/root-ca.pem
         readOnly: true
   - role: worker
     extraMounts:
       - hostPath: $PWD/.ssl/root-ca.pem
-        containerPath: /etc/ssl/certs/local-root-ca.pem
+        containerPath: /opt/ca-certificates/root-ca.pem
         readOnly: true
 EOF
 }
@@ -208,8 +225,13 @@ hubble:
       enabled: true
       annotations:
         kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: ca-issuer
       hosts:
         - hubble-ui.$DNSMASQ_DOMAIN
+      tls:
+        - secretName: hubble-ui.$DNSMASQ_DOMAIN
+          hosts:
+            - hubble-ui.$DNSMASQ_DOMAIN
 EOF
 }
 
@@ -286,6 +308,7 @@ cleanup(){
 
   kind delete cluster || true
   sudo rm -f /etc/dnsmasq.d/$DNSMASQ_CONF
+  sudo rm -rf /usr/local/share/ca-certificates/kind.cluster
 }
 
 # RUN
@@ -294,6 +317,7 @@ cleanup
 network
 proxies
 root_ca
+install_ca
 cluster
 cilium
 cert_manager
@@ -308,4 +332,4 @@ restart_service   dnsmasq
 
 log "CLUSTER READY !"
 
-echo "HUBBLE UI: http://hubble-ui.$DNSMASQ_DOMAIN"
+echo "HUBBLE UI: https://hubble-ui.$DNSMASQ_DOMAIN"

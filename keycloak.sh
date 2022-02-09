@@ -32,7 +32,6 @@ ingress:
   hostname: keycloak.kind.cluster
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/ssl-redirect: 'false'
     cert-manager.io/cluster-issuer: ca-issuer
   tls: true
 postgresql:
@@ -93,7 +92,7 @@ EOF
 kubectl_config(){
   log "KUBECTL ..."
 
-  local ID_TOKEN=$(curl -k -X POST https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/token \
+  local ID_TOKEN=$(curl -X POST https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/token \
     -d grant_type=password \
     -d client_id=kube \
     -d client_secret=kube-client-secret \
@@ -102,7 +101,7 @@ kubectl_config(){
     -d scope=openid \
     -d response_type=id_token | jq -r '.id_token')
 
-  local REFRESH_TOKEN=$(curl -k -X POST https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/token \
+  local REFRESH_TOKEN=$(curl -X POST https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/token \
     -d grant_type=password \
     -d client_id=kube \
     -d client_secret=kube-client-secret \
@@ -111,7 +110,7 @@ kubectl_config(){
     -d scope=openid \
     -d response_type=id_token | jq -r '.refresh_token')
 
-  local CA_DATA=$(cat .ssl/cert.pem | base64 | tr -d '\n')
+  local CA_DATA=$(cat .ssl/root-ca.pem | base64 | tr -d '\n')
 
   kubectl config set-credentials $1 \
     --auth-provider=oidc \

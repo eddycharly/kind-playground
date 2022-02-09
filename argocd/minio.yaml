@@ -26,8 +26,13 @@ spec:
           enabled: true
           annotations:
             kubernetes.io/ingress.class: nginx
+            cert-manager.io/cluster-issuer: ca-issuer
           hosts:
             - minio.kind.cluster
+          tls:
+            - secretName: minio.kind.cluster
+              hosts:
+                - minio.kind.cluster
   destination:
     server: https://kubernetes.default.svc
     namespace: minio

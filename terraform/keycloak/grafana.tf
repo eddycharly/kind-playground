@@ -7,7 +7,7 @@ resource "keycloak_openid_client" "grafana" {
   access_type           = "CONFIDENTIAL"
   client_secret         = "grafana-client-secret"
   standard_flow_enabled = true
-  valid_redirect_uris   = ["http://grafana.kind.cluster/login/generic_oauth"]
+  valid_redirect_uris   = ["https://grafana.kind.cluster/login/generic_oauth"]
 }
 
 # configure argocd openid client default scopes

@@ -26,8 +26,17 @@ redis:
 redis-ha:
   enabled: false
 server:
+  volumeMounts:
+    - mountPath: /etc/ssl/certs/root-ca.pem
+      name: opt-ca-certificates
+      readOnly: true
+  volumes:
+    - name: opt-ca-certificates
+      hostPath:
+        path: /opt/ca-certificates/root-ca.pem
+        type: File
   config:
-    url: http://argocd.$DNSMASQ_DOMAIN
+    url: https://argocd.$DNSMASQ_DOMAIN
     application.instanceLabelKey: argocd.argoproj.io/instance
     admin.enabled: 'false'
     resource.exclusions: |
@@ -41,7 +50,7 @@ server:
       ignoreResourceStatusField: all
     oidc.config: |
       name: Keycloak
-      issuer: http://keycloak.$DNSMASQ_DOMAIN/auth/realms/master
+      issuer: https://keycloak.$DNSMASQ_DOMAIN/auth/realms/master
       clientID: argocd
       clientSecret: argocd-client-secret
       requestedScopes: ['openid', 'profile', 'email', 'groups']
@@ -54,9 +63,14 @@ server:
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: ca-issuer
     enabled: true
     hosts:
       - argocd.$DNSMASQ_DOMAIN
+    tls:
+      - secretName: argocd.$DNSMASQ_DOMAIN
+        hosts:
+          - argocd.$DNSMASQ_DOMAIN
 EOF
 }
 
@@ -68,4 +82,4 @@ argocd
 
 log "ARGOCD READY !"
 
-echo "ARGOCD: http://argocd.$DNSMASQ_DOMAIN"
+echo "ARGOCD: https://argocd.$DNSMASQ_DOMAIN"
