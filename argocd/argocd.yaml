@@ -12,6 +12,9 @@ spec:
     targetRevision: '*'
     helm:
       values: |
+        global:
+          securityContext:
+            runAsNonRoot: true
         dex:
           enabled: false
         redis:
@@ -20,6 +23,13 @@ spec:
             enabled: true
             serviceMonitor:
               enabled: true
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
         redis-ha:
           enabled: false
         controller:
@@ -27,11 +37,25 @@ spec:
             enabled: true
             serviceMonitor:
               enabled: true
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
         repoServer:
           metrics:
             enabled: true
             serviceMonitor:
               enabled: true
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
         server:
           volumeMounts:
             - mountPath: /etc/ssl/certs/root-ca.pem
@@ -42,6 +66,13 @@ spec:
               hostPath:
                 path: /opt/ca-certificates/root-ca.pem
                 type: File
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
           metrics:
             enabled: true
             serviceMonitor:

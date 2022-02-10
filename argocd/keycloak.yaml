@@ -31,13 +31,40 @@ spec:
             cert-manager.io/cluster-issuer: ca-issuer
           tls: true
           selfSigned: false
+        podSecurityContext:
+          runAsNonRoot: true
+        containerSecurityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
         postgresql:
           enabled: true
           postgresqlPassword: password
+          securityContext:
+            runAsNonRoot: true
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
           metrics:
             enabled: true
             serviceMonitor:
               enabled: true
+            securityContext:
+              runAsNonRoot: true
+            containerSecurityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: true
+              runAsNonRoot: true
   destination:
     server: https://kubernetes.default.svc
     namespace: keycloak

@@ -14,6 +14,16 @@ spec:
       values: |
         extraArgs:
           kubelet-insecure-tls: true
+        podSecurityContext:
+          enabled: true
+          runAsNonRoot: true
+        containerSecurityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          # readOnlyRootFilesystem: true
+          runAsNonRoot: true
         apiService:
           create: true
   destination:
@@ -25,6 +35,6 @@ spec:
       - ApplyOutOfSyncOnly=true
       - FailOnSharedResource=true
       - PruneLast=true
-    automated:
-      prune: true
-      selfHeal: true
+    # automated:
+    #   prune: true
+    #   selfHeal: true

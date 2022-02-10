@@ -12,6 +12,13 @@ spec:
     targetRevision: '*'
     helm:
       values: |
+        securityContext:
+          # allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
+          # runAsNonRoot: true
         resources:
           requests:
             cpu: '0'

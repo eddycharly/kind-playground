@@ -70,7 +70,15 @@ grafana:
       readOnly: true
       hostPath: /opt/ca-certificates
       hostPathType: Directory
+  securityContext:
+    runAsNonRoot: true
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
   sidecar:
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
     enableUniqueFilenames: true
     dashboards:
       enabled: true
@@ -106,6 +114,18 @@ grafana:
       - secretName: grafana.kind.cluster
         hosts:
           - grafana.kind.cluster
+prometheus-node-exporter:
+  securityContext:
+    runAsNonRoot: true
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+kube-state-metrics:
+  securityContext:
+    runAsNonRoot: true
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
 EOF
 
 deploy cilium

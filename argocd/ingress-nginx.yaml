@@ -13,12 +13,30 @@ spec:
     helm:
       values: |
         controller:
+          # # podSecurityContext:
+          # #   runAsNonRoot: true
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            # capabilities:
+            #   drop:
+            #     - ALL
+            # readOnlyRootFilesystem: true
+            # runAsNonRoot: true
           metrics:
             enabled: true
             serviceMonitor:
               enabled: true
         defaultBackend:
           enabled: true
+          podSecurityContext:
+            runAsNonRoot: true
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx
