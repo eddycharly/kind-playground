@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mattermost-team-edition
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://helm.mattermost.com
+    chart: mattermost-team-edition
+    targetRevision: '*'
+    helm:
+      values: |
+        mysql:
+          mysqlUser: mattermost
+          mysqlPassword: mattermost
+        config:
+          MM_SERVICESETTINGS_SITEURL: https://mattermost.kind.cluster
+          MM_TEAMSETTINGS_SITENAME: Mattermost on kind.cluster
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mattermost
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true
