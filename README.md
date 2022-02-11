@@ -50,6 +50,7 @@ Available applications:
 - [keycloak](./argocd/keycloak.yaml)
 - [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)
 - [kyverno](./argocd/kyverno.yaml)
+- [mattermost-team-edition](./argocd/mattermost-team-edition.yaml)
 - [metrics-server](./argocd/metrics-server.yaml)
 - [minio](./argocd/minio.yaml)
 - [node-problem-detector](./argocd/node-problem-detector.yaml)

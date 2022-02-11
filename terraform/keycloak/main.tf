@@ -9,18 +9,24 @@ terraform {
 
 # configure keycloak provider
 provider "keycloak" {
-  client_id                = "admin-cli"
-  username                 = "admin"
-  password                 = "admin"
-  url                      = "https://keycloak.kind.cluster"
+  client_id = "admin-cli"
+  username  = "admin"
+  password  = "admin"
+  url       = "https://keycloak.kind.cluster"
 }
 
 locals {
   realm_id = "master"
   groups   = ["argocd-dev", "argocd-admin", "grafana-dev", "grafana-admin", "kube-dev", "kube-admin"]
   user_groups = {
-    user-dev   = ["argocd-dev", "grafana-dev", "kube-dev"]
-    user-admin = ["argocd-admin", "grafana-admin", "kube-admin"]
+    user-dev = {
+      groups    = ["argocd-dev", "grafana-dev", "kube-dev"]
+      gitlab_id = 1
+    }
+    user-admin = {
+      groups    = ["argocd-admin", "grafana-admin", "kube-admin"]
+      gitlab_id = 2
+    }
   }
 }
 
@@ -45,6 +51,10 @@ resource "keycloak_user" "users" {
   initial_password {
     value = each.key
   }
+
+  attributes = {
+    gitlab_id = each.value.gitlab_id
+  }
 }
 
 # configure use groups membership
@@ -52,7 +62,7 @@ resource "keycloak_user_groups" "user_groups" {
   for_each  = local.user_groups
   realm_id  = local.realm_id
   user_id   = keycloak_user.users[each.key].id
-  group_ids = [for g in each.value : keycloak_group.groups[g].id]
+  group_ids = [for g in each.value.groups : keycloak_group.groups[g].id]
 }
 
 # create groups openid client scope

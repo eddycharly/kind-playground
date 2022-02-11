@@ -34,8 +34,8 @@ spec:
               enabled: true
         server:
           volumeMounts:
-            - mountPath: /etc/ssl/certs/root-ca.pem
-              name: opt-ca-certificates
+            - name: opt-ca-certificates
+              mountPath: /etc/ssl/certs/root-ca.pem
               readOnly: true
           volumes:
             - name: opt-ca-certificates

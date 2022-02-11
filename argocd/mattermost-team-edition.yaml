@@ -15,9 +15,24 @@ spec:
         mysql:
           mysqlUser: mattermost
           mysqlPassword: mattermost
+        extraVolumes:
+          - name: opt-ca-certificates
+            hostPath:
+              path: /opt/ca-certificates/root-ca.pem
+              type: File
+        extraVolumeMounts:
+          - name: opt-ca-certificates
+            mountPath: /etc/ssl/certs/root-ca.pem
+            readOnly: true
         config:
           MM_SERVICESETTINGS_SITEURL: https://mattermost.kind.cluster
           MM_TEAMSETTINGS_SITENAME: Mattermost on kind.cluster
+          MM_GITLABSETTINGS_ENABLE: 'true'
+          MM_GITLABSETTINGS_ID: mattermost
+          MM_GITLABSETTINGS_SECRET: mattermost-client-secret
+          MM_GITLABSETTINGS_AUTHENDPOINT: https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/auth
+          MM_GITLABSETTINGS_TOKENENDPOINT: https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/token
+          MM_GITLABSETTINGS_USERAPIENDPOINT: https://keycloak.kind.cluster/auth/realms/master/protocol/openid-connect/userinfo
   destination:
     server: https://kubernetes.default.svc
     namespace: mattermost
