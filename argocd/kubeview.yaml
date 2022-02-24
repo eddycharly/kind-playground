@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeview
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://raw.githubusercontent.com/benc-uk/kubeview/master/charts
+    chart: kubeview
+    targetRevision: '*'
+    helm:
+      values: |
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: nginx
+            cert-manager.io/cluster-issuer: ca-issuer
+          hosts:
+            - host: kubeview.kind.cluster
+          tls:
+            - secretName: kubeview.kind.cluster
+              hosts:
+                - kubeview.kind.cluster
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeview
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true

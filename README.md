@@ -49,6 +49,7 @@ Available applications:
 - [ingress-nginx](./argocd/ingress-nginx.yaml)
 - [keycloak](./argocd/keycloak.yaml)
 - [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)
+- [kubeview](./argocd/kubeview.yaml)
 - [kyverno](./argocd/kyverno.yaml)
 - [mattermost-team-edition](./argocd/mattermost-team-edition.yaml)
 - [metrics-server](./argocd/metrics-server.yaml)

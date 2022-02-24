@@ -23,6 +23,7 @@ deploy metrics-server
 deploy rbac-manager
 deploy node-problem-detector
 deploy polaris
+deploy kubeview
 deploy mattermost-team-edition
 
 kubectl apply -n mattermost -f ./manifests/mattermost-team-edition
