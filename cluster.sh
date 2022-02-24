@@ -4,7 +4,7 @@ set -e
 
 # CONSTANTS
 
-readonly KIND_NODE_IMAGE=kindest/node:v1.23.1
+readonly KIND_NODE_IMAGE=kindest/node:v1.23.3
 readonly DNSMASQ_DOMAIN=kind.cluster
 readonly DNSMASQ_CONF=kind.k8s.conf
 
