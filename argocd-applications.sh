@@ -16,6 +16,8 @@ deploy cilium
 deploy cert-manager
 # deploy metallb
 deploy ingress-nginx
+deploy kyverno
+deploy kyverno-policies
 deploy keycloak
 deploy argocd
 deploy minio

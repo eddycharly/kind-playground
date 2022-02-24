@@ -51,6 +51,7 @@ Available applications:
 - [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)
 - [kubeview](./argocd/kubeview.yaml)
 - [kyverno](./argocd/kyverno.yaml)
+- [kyverno-policies](./argocd/kyverno-policies.yaml)
 - [mattermost-team-edition](./argocd/mattermost-team-edition.yaml)
 - [metrics-server](./argocd/metrics-server.yaml)
 - [minio](./argocd/minio.yaml)
