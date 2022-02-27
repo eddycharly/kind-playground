@@ -18,6 +18,7 @@ deploy cert-manager
 deploy ingress-nginx
 deploy kyverno
 deploy kyverno-policies
+deploy policy-reporter
 deploy keycloak
 deploy argocd
 deploy minio

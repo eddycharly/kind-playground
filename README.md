@@ -57,4 +57,5 @@ Available applications:
 - [minio](./argocd/minio.yaml)
 - [node-problem-detector](./argocd/node-problem-detector.yaml)
 - [polaris](./argocd/polaris.yaml)
+- [policy-reporter](./argocd/policy-reporter.yaml)
 - [rbac-manager](./argocd/rbac-manager.yaml)

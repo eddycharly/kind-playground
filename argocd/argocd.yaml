@@ -50,6 +50,12 @@ spec:
             url: https://argocd.kind.cluster
             application.instanceLabelKey: argocd.argoproj.io/instance
             admin.enabled: 'false'
+            resource.customizations.ignoreDifferences.kyverno.io_Policy: |
+              jqPathExpressions:
+              - .spec.rules[] | select(.name|test("autogen-."))
+            resource.customizations.ignoreDifferences.kyverno.io_ClusterPolicy: |
+              jqPathExpressions:
+              - .spec.rules[] | select(.name|test("autogen-."))
             resource.exclusions: |
               - apiGroups:
                   - cilium.io
