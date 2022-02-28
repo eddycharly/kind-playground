@@ -14,13 +14,10 @@ spec:
       values: |
         kyvernoPlugin:
           enabled: true
-
         ui:
           enabled: true
-
           plugins:
             kyverno: true
-
           ingress:
             enabled: true
             annotations:

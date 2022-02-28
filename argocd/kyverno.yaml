@@ -15,6 +15,9 @@ spec:
         replicaCount: 3
         config:
           resourceFilters: []
+        podSecurityContext:
+          seccompProfile:
+            type: RuntimeDefault
   destination:
     server: https://kubernetes.default.svc
     namespace: kyverno
