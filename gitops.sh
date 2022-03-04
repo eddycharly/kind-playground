@@ -42,6 +42,49 @@ install(){
   log "INSTALL ..."
 
   cp -r helm/ .gitops/
+
+  cat <<EOF > .gitops/config.yaml
+prometheus:
+  operator:
+    enabled: false
+
+dns:
+  private: $DNSMASQ_DOMAIN
+
+metallb:
+  start: $METALLB_START
+  end: $METALLB_END
+
+applications:
+  argocd:
+    enabled: true
+  certManager:
+    enabled: true
+  cilium:
+    enabled: true
+  gitea:
+    enabled: true
+  ingressNginx:
+    enabled: true
+  keycloak:
+    enabled: true
+  kubeview:
+    enabled: true
+  kyverno:
+    enabled: true
+  kyvernoPolicies:
+    enabled: true
+  metallb:
+    enabled: true
+  metricsServer:                        
+    enabled: true
+  nodeProblemDetector:
+    enabled: true
+  policyReporter:
+    enabled: true
+  rbacManager:
+    enabled: true
+EOF
 }
 
 push(){

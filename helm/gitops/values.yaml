@@ -5,6 +5,10 @@ prometheus:
 dns:
   private: kind.cluster
 
+metallb:
+  start:
+  end:
+
 applications:
   argocd:
     enabled: true
