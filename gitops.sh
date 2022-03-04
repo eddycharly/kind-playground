@@ -41,6 +41,7 @@ init(){
 install(){
   log "INSTALL ..."
 
+  rm -rf .gitops/helm
   cp -r helm/ .gitops/
 
   cat <<EOF > .gitops/config.yaml
