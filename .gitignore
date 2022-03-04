@@ -1,3 +1,4 @@
+.gitops
 .ssl
 .tf-state
 .terraform.lock.hcl

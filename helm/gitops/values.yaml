@@ -1,0 +1,6 @@
+prometheus:
+  operator:
+    enabled: false
+
+dns:
+  private: kind.cluster

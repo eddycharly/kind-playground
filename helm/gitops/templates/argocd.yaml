@@ -1,0 +1,103 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-cd
+    targetRevision: '*'
+    helm:
+      values: |
+        dex:
+          enabled: false
+        redis:
+          enabled: true
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: {{ .Values.prometheus.operator.enabled }}
+        redis-ha:
+          enabled: false
+        controller:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: {{ .Values.prometheus.operator.enabled }}
+        repoServer:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: {{ .Values.prometheus.operator.enabled }}
+        server:
+          volumeMounts:
+            - name: opt-ca-certificates
+              mountPath: /etc/ssl/certs/root-ca.pem
+              readOnly: true
+          volumes:
+            - name: opt-ca-certificates
+              hostPath:
+                path: /opt/ca-certificates/root-ca.pem
+                type: File
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: {{ .Values.prometheus.operator.enabled }}
+          config:
+            url: https://argocd.{{ .Values.dns.private }}
+            application.instanceLabelKey: argocd.argoproj.io/instance
+            admin.enabled: 'false'
+            resource.customizations.ignoreDifferences.kyverno.io_Policy: |
+              jqPathExpressions:
+              - .spec.rules[] | select(.name|test("autogen-."))
+            resource.customizations.ignoreDifferences.kyverno.io_ClusterPolicy: |
+              jqPathExpressions:
+              - .spec.rules[] | select(.name|test("autogen-."))
+            resource.exclusions: |
+              - apiGroups:
+                  - cilium.io
+                kinds:
+                  - CiliumIdentity
+                clusters:
+                  - '*'
+            resource.compareoptions: |
+              ignoreResourceStatusField: all
+            oidc.config: |
+              name: Keycloak
+              issuer: https://keycloak.{{ .Values.dns.private }}/auth/realms/master
+              clientID: argocd
+              clientSecret: argocd-client-secret
+              requestedScopes: ['openid', 'profile', 'email', 'groups']
+          rbacConfig:
+            policy.default: role:readonly
+            policy.csv: |
+              g, argocd-admin, role:admin
+          extraArgs:
+            - --insecure
+          ingress:
+            annotations:
+              kubernetes.io/ingress.class: nginx
+              cert-manager.io/cluster-issuer: ca-issuer
+            enabled: true
+            hosts:
+              - argocd.{{ .Values.dns.private }}
+            tls:
+              - secretName: argocd.{{ .Values.dns.private }}
+                hosts:
+                  - argocd.{{ .Values.dns.private }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true

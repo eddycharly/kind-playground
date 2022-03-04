@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://metallb.github.io/metallb
+    chart: metallb
+    targetRevision: '*'
+    helm:
+      values: |
+        configInline:
+          address-pools:
+            - name: default
+              protocol: layer2
+              addresses:
+                - {{ .Values.metallb.start }}-{{ .Values.metallb.end }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: metallb-system
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true

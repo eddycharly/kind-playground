@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://dl.gitea.io/charts
+    chart: gitea
+    targetRevision: '*'
+    helm:
+      values: |
+        gitea:
+          admin:
+            username: gitea_admin
+            password: admin
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: nginx
+            cert-manager.io/cluster-issuer: ca-issuer
+            nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+          hosts:
+            - host: gitea.{{ .Values.dns.private }}
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: gitea.{{ .Values.dns.private }}
+              hosts:
+                - gitea.{{ .Values.dns.private }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitea
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true
