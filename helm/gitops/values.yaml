@@ -4,3 +4,33 @@ prometheus:
 
 dns:
   private: kind.cluster
+
+applications:
+  argocd:
+    enabled: true
+  certManager:
+    enabled: true
+  cilium:
+    enabled: true
+  gitea:
+    enabled: true
+  ingressNginx:
+    enabled: true
+  keycloak:
+    enabled: true
+  kubeview:
+    enabled: true
+  kyverno:
+    enabled: true
+  kyvernoPolicies:
+    enabled: true
+  metallb:
+    enabled: true
+  metricsServer:                        
+    enabled: true
+  nodeProblemDetector:
+    enabled: true
+  policyReporter:
+    enabled: true
+  rbacManager:
+    enabled: true

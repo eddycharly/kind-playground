@@ -1,26 +1,32 @@
-{{- if .Values.applications.certManager.enabled -}}
+{{- if .Values.applications.nodeProblemDetector.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager
+  name: node-problem-detector
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://charts.jetstack.io
-    chart: cert-manager
+    repoURL: https://charts.deliveryhero.io
+    chart: node-problem-detector
     targetRevision: '*'
     helm:
       values: |
-        installCRDs: true
-        prometheus:
+        resources:
+          requests:
+            cpu: '0'
+            memory: '0'
+          limits:
+            memory: 32Mi
+            cpu: 20m
+        metrics:
           enabled: true
-          servicemonitor:
+          serviceMonitor:
             enabled: {{ .Values.prometheus.operator.enabled }}
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager
+    namespace: kube-system
   revisionHistoryLimit: 3
   syncPolicy:
     syncOptions:

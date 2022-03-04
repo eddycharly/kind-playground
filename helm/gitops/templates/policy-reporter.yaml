@@ -1,0 +1,49 @@
+{{- if .Values.applications.policyReporter.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: policy-reporter
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://kyverno.github.io/policy-reporter
+    chart: policy-reporter
+    targetRevision: '*'
+    helm:
+      values: |
+        kyvernoPlugin:
+          enabled: true
+        ui:
+          enabled: true
+          plugins:
+            kyverno: true
+          ingress:
+            enabled: true
+            annotations:
+              kubernetes.io/ingress.class: nginx
+              cert-manager.io/cluster-issuer: ca-issuer
+            hosts:
+              - host: policy-reporter.{{ .Values.dns.private }}
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls:
+              - secretName: policy-reporter.{{ .Values.dns.private }}
+                hosts:
+                  - policy-reporter.{{ .Values.dns.private }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kyverno
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true
+{{- end -}}

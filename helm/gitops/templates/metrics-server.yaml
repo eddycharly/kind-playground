@@ -1,31 +1,29 @@
-{{- if .Values.applications.certManager.enabled -}}
+{{- if .Values.applications.metricsServer.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager
+  name: metrics-server
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://charts.jetstack.io
-    chart: cert-manager
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: metrics-server
     targetRevision: '*'
     helm:
       values: |
-        installCRDs: true
-        prometheus:
-          enabled: true
-          servicemonitor:
-            enabled: {{ .Values.prometheus.operator.enabled }}
+        extraArgs:
+          kubelet-insecure-tls: true
+        apiService:
+          create: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager
+    namespace: kube-system
   revisionHistoryLimit: 3
   syncPolicy:
     syncOptions:
       - ApplyOutOfSyncOnly=true
-      - CreateNamespace=true
       - FailOnSharedResource=true
       - PruneLast=true
     automated:

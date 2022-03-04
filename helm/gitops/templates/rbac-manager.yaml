@@ -1,26 +1,23 @@
-{{- if .Values.applications.certManager.enabled -}}
+{{- if .Values.applications.rbacManager.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager
+  name: rbac-manager
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://charts.jetstack.io
-    chart: cert-manager
+    repoURL: https://charts.fairwinds.com/stable
+    chart: rbac-manager
     targetRevision: '*'
     helm:
       values: |
-        installCRDs: true
-        prometheus:
-          enabled: true
-          servicemonitor:
-            enabled: {{ .Values.prometheus.operator.enabled }}
+        serviceMonitor:
+          enabled: {{ .Values.prometheus.operator.enabled }}
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager
+    namespace: rbac-manager
   revisionHistoryLimit: 3
   syncPolicy:
     syncOptions:

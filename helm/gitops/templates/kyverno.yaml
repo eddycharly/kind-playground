@@ -1,26 +1,27 @@
-{{- if .Values.applications.certManager.enabled -}}
+{{- if .Values.applications.kyverno.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager
+  name: kyverno
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://charts.jetstack.io
-    chart: cert-manager
+    repoURL: https://kyverno.github.io/kyverno
+    chart: kyverno
     targetRevision: '*'
     helm:
       values: |
-        installCRDs: true
-        prometheus:
-          enabled: true
-          servicemonitor:
-            enabled: {{ .Values.prometheus.operator.enabled }}
+        replicaCount: 3
+        config:
+          resourceFilters: []
+        podSecurityContext:
+          seccompProfile:
+            type: RuntimeDefault
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager
+    namespace: kyverno
   revisionHistoryLimit: 3
   syncPolicy:
     syncOptions:
