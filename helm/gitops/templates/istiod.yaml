@@ -1,0 +1,33 @@
+{{- if .Values.applications.istio.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istiod
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: istiod
+    targetRevision: '*'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: istio-sidecar-injector
+      jqPathExpressions:
+      - .webhooks[]?.clientConfig.caBundle
+{{- end -}}

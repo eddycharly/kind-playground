@@ -1,0 +1,27 @@
+{{- if .Values.applications.istio.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-ingress
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: gateway
+    targetRevision: '*'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-ingress
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true
+{{- end -}}

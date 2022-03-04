@@ -20,6 +20,8 @@ applications:
     enabled: true
   ingressNginx:
     enabled: true
+  istio:
+    enabled: true
   keycloak:
     enabled: true
   kubeview:
