@@ -58,6 +58,7 @@ EOF
 # RUN
 
 gitea
+sleep 10s
 repository  gitops
 
 # DONE

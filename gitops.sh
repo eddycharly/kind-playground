@@ -98,6 +98,12 @@ spec:
 EOF
 }
 
+unhelm(){
+  log "REMOVE HELM SECRETS ..."
+
+  kubectl delete secret -A -l owner=helm
+}
+
 # RUN
 
 cleanup
@@ -105,6 +111,7 @@ init
 install
 push
 bootstrap
+unhelm
 
 # DONE
 
