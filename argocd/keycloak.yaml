@@ -33,7 +33,9 @@ spec:
           selfSigned: false
         postgresql:
           enabled: true
-          postgresqlPassword: password
+          auth:
+            postgresPassword: password
+            password: password
           metrics:
             enabled: true
             serviceMonitor:

@@ -36,7 +36,9 @@ ingress:
   tls: true
 postgresql:
   enabled: true
-  postgresqlPassword: password
+  auth:
+    postgresPassword: password
+    password: password
 EOF
 }
 
