@@ -46,6 +46,7 @@ Available applications:
 - [argocd](./argocd/argocd.yaml)
 - [cert-manager](./argocd/cert-manager.yaml)
 - [cilium](./argocd/cilium.yaml)
+- [gitea](./argocd/gitea.yaml)
 - [ingress-nginx](./argocd/ingress-nginx.yaml)
 - [keycloak](./argocd/keycloak.yaml)
 - [kube-prometheus-stack](./argocd/kube-prometheus-stack.yaml)

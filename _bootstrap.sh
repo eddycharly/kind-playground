@@ -7,5 +7,6 @@ set -e
 ./cluster.sh
 ./keycloak.sh
 ./argocd.sh
+./gitea.sh
 ./kube-prometheus-stack.sh
 ./argocd-applications.sh
