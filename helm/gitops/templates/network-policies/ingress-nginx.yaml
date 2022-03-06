@@ -11,20 +11,9 @@ spec:
   - fromEntities:
     - host
     - remote-node
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: argocd
-        io.cilium.k8s.policy.serviceaccount: argocd-server
-    - matchLabels:
-        app.kubernetes.io/name: argocd-repo-server
-        k8s:io.kubernetes.pod.namespace: argocd
   egress:
   - toEntities:
     - kube-apiserver
-  - toEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: argocd
-        io.cilium.k8s.policy.serviceaccount: argocd-server
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy

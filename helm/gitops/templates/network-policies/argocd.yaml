@@ -1,66 +1,70 @@
+{{- if .Values.applications.argocd.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: argocd
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: argocd
+            io.cilium.k8s.policy.serviceaccount: argocd-server
+        - matchLabels:
+            app.kubernetes.io/name: argocd-repo-server
+            k8s:io.kubernetes.pod.namespace: argocd
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: argocd
+            io.cilium.k8s.policy.serviceaccount: argocd-server
+---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: argocd
   namespace: argocd
-spec:
-  endpointSelector: {}
-  ingress:
-  - fromEndpoints:
-    - matchLabels: {}
-  egress:
-  - toEndpoints:
-    - matchLabels: {}
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: argocd-server
-  namespace: argocd
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: argocd-server
-  ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: ingress-nginx
-        io.cilium.k8s.policy.serviceaccount: ingress-nginx
-  egress:
-  - toEntities:
-    - kube-apiserver
-    - world
-  - toEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: ingress-nginx
-        io.cilium.k8s.policy.serviceaccount: ingress-nginx
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: argocd-application-controller
-  namespace: argocd
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: argocd-application-controller
-  egress:
-  - toEntities:
-    - kube-apiserver
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: argocd-repo-server
-  namespace: argocd
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: argocd-repo-server
-  egress:
-  - toEntities:
-    - world
-  - toEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: ingress-nginx
-        io.cilium.k8s.policy.serviceaccount: ingress-nginx
+specs:
+  - endpointSelector: {}
+    ingress:
+      - fromEndpoints:
+          - matchLabels: {}
+    egress:
+      - toEndpoints:
+          - matchLabels: {}
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: argocd-server
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: ingress-nginx
+              io.cilium.k8s.policy.serviceaccount: ingress-nginx
+    egress:
+      - toEntities:
+          - kube-apiserver
+          - world
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: ingress-nginx
+              io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: argocd-application-controller
+    egress:
+      - toEntities:
+          - kube-apiserver
+  - endpointSelector:
+      matchLabels:
+        app.kubernetes.io/name: argocd-repo-server
+    egress:
+      - toEntities:
+          - world
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: ingress-nginx
+              io.cilium.k8s.policy.serviceaccount: ingress-nginx
+{{- end -}}
