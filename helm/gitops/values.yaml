@@ -42,4 +42,4 @@ applications:
   policyReporter:
     enabled: false
   rbacManager:
-    enabled: false
+    enabled: true

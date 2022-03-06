@@ -1,0 +1,14 @@
+{{- if .Values.applications.rbacManager.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: rbac-manager
+  namespace: rbac-manager
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: rbac-manager
+  egress:
+    - toEntities:
+        - kube-apiserver
+{{- end -}}
