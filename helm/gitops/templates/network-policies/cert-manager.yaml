@@ -1,55 +1,36 @@
+{{- if .Values.applications.certManager.enabled -}}
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: cert-manager
   namespace: cert-manager
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: cert-manager
-  egress:
-  - toEntities:
-    - kube-apiserver
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: cert-manager-cainjector
-  namespace: cert-manager
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: cert-manager-cainjector
-  egress:
-  - toEntities:
-    - kube-apiserver
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: cert-manager-webhook
-  namespace: cert-manager
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: cert-manager-webhook
-  ingress:
-  - fromEntities:
-    - host
-    - remote-node
-  egress:
-  - toEntities:
-    - kube-apiserver
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: cert-manager-startupapicheck
-  namespace: cert-manager
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: cert-manager-startupapicheck
-  egress:
-  - toEntities:
-    - kube-apiserver
+specs:
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: cert-manager
+    egress:
+    - toEntities:
+      - kube-apiserver
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: cert-manager-cainjector
+    egress:
+    - toEntities:
+      - kube-apiserver
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: cert-manager-webhook
+    ingress:
+    - fromEntities:
+      - host
+      - remote-node
+    egress:
+    - toEntities:
+      - kube-apiserver
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: cert-manager-startupapicheck
+    egress:
+    - toEntities:
+      - kube-apiserver
+{{- end -}}
