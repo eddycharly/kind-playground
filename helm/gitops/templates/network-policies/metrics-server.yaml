@@ -8,6 +8,10 @@ spec:
   endpointSelector:
     matchLabels:
       io.cilium.k8s.policy.serviceaccount: metrics-server
+  ingress:
+    - fromEntities:
+        - host
+        - remote-node
   egress:
     - toEntities:
         - kube-apiserver
