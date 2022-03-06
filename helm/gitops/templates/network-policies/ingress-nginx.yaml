@@ -1,0 +1,63 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  ingress:
+  - fromEntities:
+    - host
+    - remote-node
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: argocd
+        io.cilium.k8s.policy.serviceaccount: argocd-server
+    - matchLabels:
+        app.kubernetes.io/name: argocd-repo-server
+        k8s:io.kubernetes.pod.namespace: argocd
+  egress:
+  - toEntities:
+    - kube-apiserver
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        io.cilium.k8s.policy.serviceaccount: hubble-ui
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: argocd
+        io.cilium.k8s.policy.serviceaccount: argocd-server
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: keycloak
+        io.cilium.k8s.policy.serviceaccount: keycloak
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gitea
+        app.kubernetes.io/name: gitea
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ingress-nginx-admission
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx-admission
+  egress:
+  - toEntities:
+    - kube-apiserver
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ingress-nginx-default-backend
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx-backend
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        io.cilium.k8s.policy.serviceaccount: ingress-nginx

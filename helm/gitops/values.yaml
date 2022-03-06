@@ -20,23 +20,24 @@ applications:
     enabled: true
   ingressNginx:
     enabled: true
-  istio:
-    enabled: true
   keycloak:
-    enabled: true
-  kubeview:
-    enabled: true
-  kyverno:
-    enabled: true
-  kyvernoPolicies:
     enabled: true
   metallb:
     enabled: true
+
+  istio:
+    enabled: false
+  kubeview:
+    enabled: false
+  kyverno:
+    enabled: false
+  kyvernoPolicies:
+    enabled: false
   metricsServer:                        
-    enabled: true
+    enabled: false
   nodeProblemDetector:
-    enabled: true
+    enabled: false
   policyReporter:
-    enabled: true
+    enabled: false
   rbacManager:
-    enabled: true
+    enabled: false
