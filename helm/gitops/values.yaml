@@ -39,6 +39,8 @@ applications:
     enabled: true
   nodeProblemDetector:
     enabled: true
+  polaris:
+    enabled: true
   policyReporter:
     enabled: false
   rbacManager:
