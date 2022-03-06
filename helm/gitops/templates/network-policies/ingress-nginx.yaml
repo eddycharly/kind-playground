@@ -25,9 +25,6 @@ spec:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: argocd
         io.cilium.k8s.policy.serviceaccount: argocd-server
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gitea
-        app.kubernetes.io/name: gitea
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
