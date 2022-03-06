@@ -9,6 +9,6 @@ spec:
     matchLabels:
       io.cilium.k8s.policy.serviceaccount: local-path-provisioner-service-account
   egress:
-  - toEntities:
-    - kube-apiserver
+    - toEntities:
+        - kube-apiserver
 {{- end -}}

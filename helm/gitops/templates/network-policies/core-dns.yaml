@@ -8,22 +8,22 @@ specs:
         io.cilium.k8s.policy.serviceaccount: coredns
         k8s:io.kubernetes.pod.namespace: kube-system
     ingress:
-    - fromEndpoints:
-      - {}
-      toPorts:
-      - ports:
-        - port: '53'
-          protocol: UDP
+      - fromEndpoints:
+          - {}
+        toPorts:
+          - ports:
+              - port: '53'
+                protocol: UDP
   - endpointSelector: {}
     egress:
-    - toEndpoints:
-      - matchLabels:
-          io.cilium.k8s.policy.serviceaccount: coredns
-          k8s:io.kubernetes.pod.namespace: kube-system
-      toPorts:
-      - ports:
-        - port: '53'
-          protocol: UDP
+      - toEndpoints:
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: coredns
+              k8s:io.kubernetes.pod.namespace: kube-system
+        toPorts:
+          - ports:
+              - port: '53'
+                protocol: UDP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -35,6 +35,6 @@ spec:
     matchLabels:
       io.cilium.k8s.policy.serviceaccount: coredns
   egress:
-  - toEntities:
-    - kube-apiserver
-    - world
+    - toEntities:
+        - kube-apiserver
+        - world

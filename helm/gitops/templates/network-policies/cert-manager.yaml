@@ -9,28 +9,28 @@ specs:
       matchLabels:
         io.cilium.k8s.policy.serviceaccount: cert-manager
     egress:
-    - toEntities:
-      - kube-apiserver
+      - toEntities:
+          - kube-apiserver
   - endpointSelector:
       matchLabels:
         io.cilium.k8s.policy.serviceaccount: cert-manager-cainjector
     egress:
-    - toEntities:
-      - kube-apiserver
+      - toEntities:
+          - kube-apiserver
   - endpointSelector:
       matchLabels:
         io.cilium.k8s.policy.serviceaccount: cert-manager-webhook
     ingress:
-    - fromEntities:
-      - host
-      - remote-node
+      - fromEntities:
+          - host
+          - remote-node
     egress:
-    - toEntities:
-      - kube-apiserver
+      - toEntities:
+          - kube-apiserver
   - endpointSelector:
       matchLabels:
         io.cilium.k8s.policy.serviceaccount: cert-manager-startupapicheck
     egress:
-    - toEntities:
-      - kube-apiserver
+      - toEntities:
+          - kube-apiserver
 {{- end -}}
