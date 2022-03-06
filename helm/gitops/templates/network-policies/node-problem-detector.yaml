@@ -1,0 +1,14 @@
+{{- if .Values.applications.nodeProblemDetector.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: node-problem-detector
+  namespace: kube-system
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: node-problem-detector
+  egress:
+    - toEntities:
+        - kube-apiserver
+{{- end -}}
