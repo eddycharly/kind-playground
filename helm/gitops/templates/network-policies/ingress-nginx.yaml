@@ -29,9 +29,6 @@ spec:
         k8s:io.kubernetes.pod.namespace: argocd
         io.cilium.k8s.policy.serviceaccount: argocd-server
     - matchLabels:
-        k8s:io.kubernetes.pod.namespace: keycloak
-        io.cilium.k8s.policy.serviceaccount: keycloak
-    - matchLabels:
         k8s:io.kubernetes.pod.namespace: gitea
         app.kubernetes.io/name: gitea
 ---

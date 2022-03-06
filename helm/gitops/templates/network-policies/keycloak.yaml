@@ -1,31 +1,41 @@
+{{- if .Values.applications.keycloak.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: keycloak
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: keycloak
+        io.cilium.k8s.policy.serviceaccount: keycloak
+---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: keycloak
   namespace: keycloak
-spec:
-  endpointSelector: {}
-  ingress:
-  - fromEndpoints:
-    - matchLabels: {}
-  egress:
-  - toEndpoints:
-    - matchLabels: {}
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: keycloak-server
-  namespace: keycloak
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: keycloak
-  ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: ingress-nginx
-        io.cilium.k8s.policy.serviceaccount: ingress-nginx
-  egress:
-  - toCIDR:
-    - 230.0.0.4/32
+specs:
+  - endpointSelector: {}
+    ingress:
+    - fromEndpoints:
+      - matchLabels: {}
+    egress:
+    - toEndpoints:
+      - matchLabels: {}
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: keycloak
+    ingress:
+    - fromEndpoints:
+      - matchLabels:
+          k8s:io.kubernetes.pod.namespace: ingress-nginx
+          io.cilium.k8s.policy.serviceaccount: ingress-nginx
+    egress:
+    - toCIDR:
+      - 230.0.0.4/32
+{{- end -}}

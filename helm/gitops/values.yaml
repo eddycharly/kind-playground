@@ -22,6 +22,8 @@ applications:
     enabled: true
   keycloak:
     enabled: true
+  localPathProvisioner:
+    enabled: true
   metallb:
     enabled: true
 
