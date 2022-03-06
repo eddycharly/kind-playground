@@ -1,0 +1,227 @@
+{{- if .Values.applications.polaris.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: polaris
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.fairwinds.com/stable
+    chart: polaris
+    targetRevision: '*'
+    helm:
+      values: |
+        # config:
+        #   checks:
+        #     # reliability
+        #     multipleReplicasForDeployment: warning
+        #     priorityClassNotSet: ignore
+        #     tagNotSpecified: danger
+        #     pullPolicyNotAlways: warning
+        #     readinessProbeMissing: warning
+        #     livenessProbeMissing: warning
+        #     metadataAndNameMismatched: ignore
+        #     pdbDisruptionsIsZero: warning
+        #     missingPodDisruptionBudget: ignore
+        #     # efficiency
+        #     cpuRequestsMissing: warning
+        #     cpuLimitsMissing: warning
+        #     memoryRequestsMissing: warning
+        #     memoryLimitsMissing: warning
+        #     # security
+        #     hostIPCSet: danger
+        #     hostPIDSet: danger
+        #     notReadOnlyRootFilesystem: warning
+        #     privilegeEscalationAllowed: danger
+        #     runAsRootAllowed: warning
+        #     runAsPrivileged: danger
+        #     dangerousCapabilities: danger
+        #     insecureCapabilities: warning
+        #     hostNetworkSet: warning
+        #     hostPortSet: warning
+        #     tlsSettingsMissing: warning
+        #   exemptions: []
+        #     # - namespace: kube-system
+        #     #   controllerNames:
+        #     #     - kube-apiserver
+        #     #     - kube-proxy
+        #     #     - kube-scheduler
+        #     #     - etcd-manager-events
+        #     #     - kube-controller-manager
+        #     #     - kube-dns
+        #     #     - etcd-manager-main
+        #     #   rules:
+        #     #     - hostPortSet
+        #     #     - hostNetworkSet
+        #     #     - readinessProbeMissing
+        #     #     - livenessProbeMissing
+        #     #     - cpuRequestsMissing
+        #     #     - cpuLimitsMissing
+        #     #     - memoryRequestsMissing
+        #     #     - memoryLimitsMissing
+        #     #     - runAsRootAllowed
+        #     #     - runAsPrivileged
+        #     #     - notReadOnlyRootFilesystem
+        #     #     - hostPIDSet
+        #     # - controllerNames:
+        #     #     - kube-flannel-ds
+        #     #   rules:
+        #     #     - notReadOnlyRootFilesystem
+        #     #     - runAsRootAllowed
+        #     #     - notReadOnlyRootFilesystem
+        #     #     - readinessProbeMissing
+        #     #     - livenessProbeMissing
+        #     #     - cpuLimitsMissing
+        #     # - controllerNames:
+        #     #     - cert-manager
+        #     #   rules:
+        #     #     - notReadOnlyRootFilesystem
+        #     #     - runAsRootAllowed
+        #     #     - readinessProbeMissing
+        #     #     - livenessProbeMissing
+        #     # - controllerNames:
+        #     #     - cluster-autoscaler
+        #     #   rules:
+        #     #     - notReadOnlyRootFilesystem
+        #     #     - runAsRootAllowed
+        #     #     - readinessProbeMissing
+        #     # - controllerNames:
+        #     #     - vpa
+        #     #   rules:
+        #     #     - runAsRootAllowed
+        #     #     - readinessProbeMissing
+        #     #     - livenessProbeMissing
+        #     #     - notReadOnlyRootFilesystem
+        #     # - controllerNames:
+        #     #     - datadog
+        #     #   rules:
+        #     #     - runAsRootAllowed
+        #     #     - readinessProbeMissing
+        #     #     - livenessProbeMissing
+        #     #     - notReadOnlyRootFilesystem
+        #     # - controllerNames:
+        #     #     - nginx-ingress-controller
+        #     #   rules:
+        #     #     - privilegeEscalationAllowed
+        #     #     - insecureCapabilities
+        #     #     - runAsRootAllowed
+        #     # - controllerNames:
+        #     #     - dns-controller
+        #     #     - datadog-datadog
+        #     #     - kube-flannel-ds
+        #     #     - kube2iam
+        #     #     - aws-iam-authenticator
+        #     #     - datadog
+        #     #     - kube2iam
+        #     #   rules:
+        #     #     - hostNetworkSet
+        #     # - controllerNames:
+        #     #     - aws-iam-authenticator
+        #     #     - aws-cluster-autoscaler
+        #     #     - kube-state-metrics
+        #     #     - dns-controller
+        #     #     - external-dns
+        #     #     - dnsmasq
+        #     #     - autoscaler
+        #     #     - kubernetes-dashboard
+        #     #     - install-cni
+        #     #     - kube2iam
+        #     #   rules:
+        #     #     - readinessProbeMissing
+        #     #     - livenessProbeMissing
+        #     # - controllerNames:
+        #     #     - aws-iam-authenticator
+        #     #     - nginx-ingress-default-backend
+        #     #     - aws-cluster-autoscaler
+        #     #     - kube-state-metrics
+        #     #     - dns-controller
+        #     #     - external-dns
+        #     #     - kubedns
+        #     #     - dnsmasq
+        #     #     - autoscaler
+        #     #     - tiller
+        #     #     - kube2iam
+        #     #   rules:
+        #     #     - runAsRootAllowed
+        #     # - controllerNames:
+        #     #     - aws-iam-authenticator
+        #     #     - nginx-ingress-controller
+        #     #     - nginx-ingress-default-backend
+        #     #     - aws-cluster-autoscaler
+        #     #     - kube-state-metrics
+        #     #     - dns-controller
+        #     #     - external-dns
+        #     #     - kubedns
+        #     #     - dnsmasq
+        #     #     - autoscaler
+        #     #     - tiller
+        #     #     - kube2iam
+        #     #   rules:
+        #     #     - notReadOnlyRootFilesystem
+        #     # - controllerNames:
+        #     #     - cert-manager
+        #     #     - dns-controller
+        #     #     - kubedns
+        #     #     - dnsmasq
+        #     #     - autoscaler
+        #     #     - insights-agent-goldilocks-vpa-install
+        #     #     - datadog
+        #     #   rules:
+        #     #     - cpuRequestsMissing
+        #     #     - cpuLimitsMissing
+        #     #     - memoryRequestsMissing
+        #     #     - memoryLimitsMissing
+        #     # - controllerNames:
+        #     #     - kube2iam
+        #     #     - kube-flannel-ds
+        #     #   rules:
+        #     #     - runAsPrivileged
+        #     # - controllerNames:
+        #     #     - kube-hunter
+        #     #   rules:
+        #     #     - hostPIDSet
+        #     # - controllerNames:
+        #     #     - polaris
+        #     #     - kube-hunter
+        #     #     - goldilocks
+        #     #     - insights-agent-goldilocks-vpa-install
+        #     #   rules:
+        #     #     - notReadOnlyRootFilesystem
+        #     # - controllerNames:
+        #     #     - insights-agent-goldilocks-controller
+        #     #   rules:
+        #     #     - livenessProbeMissing
+        #     #     - readinessProbeMissing
+        #     # - controllerNames:
+        #     #     - insights-agent-goldilocks-vpa-install
+        #     #     - kube-hunter
+        #     #   rules:
+        #     #     - runAsRootAllowed
+        dashboard:
+          ingress:
+            enabled: true
+            annotations:
+              kubernetes.io/ingress.class: nginx
+              cert-manager.io/cluster-issuer: ca-issuer
+            hosts:
+              - polaris.{{ .Values.dns.private }}
+            tls:
+              - secretName: polaris.{{ .Values.dns.private }}
+                hosts:
+                  - polaris.{{ .Values.dns.private }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: polaris
+  revisionHistoryLimit: 3
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true
+{{- end -}}

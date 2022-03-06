@@ -1,0 +1,34 @@
+{{- if .Values.applications.polaris.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: polaris
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: polaris
+            io.cilium.k8s.policy.serviceaccount: polaris
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: polaris
+  namespace: polaris
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: polaris
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ingress-nginx
+            io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  egress:
+    - toEntities:
+        - kube-apiserver
+{{- end -}}
