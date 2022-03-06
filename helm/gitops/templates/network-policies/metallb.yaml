@@ -2,13 +2,13 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: metallb-controller
+  name: metallb
   namespace: metallb-system
 spec:
   endpointSelector:
     matchLabels:
       io.cilium.k8s.policy.serviceaccount: metallb-controller
   egress:
-  - toEntities:
-    - kube-apiserver
+    - toEntities:
+        - kube-apiserver
 {{- end -}}

@@ -1,43 +1,31 @@
+{{- if .Values.applications.ingressNginx.enabled -}}
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: ingress-nginx-controller
+  name: ingress-nginx
   namespace: ingress-nginx
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: ingress-nginx
-  ingress:
-  - fromEntities:
-    - host
-    - remote-node
-  egress:
-  - toEntities:
-    - kube-apiserver
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: ingress-nginx-admission
-  namespace: ingress-nginx
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: ingress-nginx-admission
-  egress:
-  - toEntities:
-    - kube-apiserver
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: ingress-nginx-default-backend
-  namespace: ingress-nginx
-spec:
-  endpointSelector:
-    matchLabels:
-      io.cilium.k8s.policy.serviceaccount: ingress-nginx-backend
-  ingress:
-  - fromEndpoints:
-    - matchLabels:
+specs:
+  - endpointSelector:
+      matchLabels:
         io.cilium.k8s.policy.serviceaccount: ingress-nginx
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+    egress:
+      - toEntities:
+          - kube-apiserver
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: ingress-nginx-admission
+    egress:
+      - toEntities:
+          - kube-apiserver
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: ingress-nginx-backend
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: ingress-nginx
+{{- end -}}
