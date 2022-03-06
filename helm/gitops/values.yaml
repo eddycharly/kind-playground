@@ -28,7 +28,7 @@ applications:
   istio:
     enabled: false
   kubeview:
-    enabled: false
+    enabled: true
   kyverno:
     enabled: false
   kyvernoPolicies:

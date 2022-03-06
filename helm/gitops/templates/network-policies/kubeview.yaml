@@ -1,0 +1,34 @@
+{{- if .Values.applications.kubeview.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: kubeview
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kubeview
+        io.cilium.k8s.policy.serviceaccount: kubeview
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: kubeview
+  namespace: kubeview
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: kubeview
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: ingress-nginx
+        io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  egress:
+  - toEntities:
+    - kube-apiserver
+{{- end -}}
