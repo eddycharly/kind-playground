@@ -1,0 +1,48 @@
+{{- if .Values.applications.cilium.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cilium
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        io.cilium.k8s.policy.serviceaccount: hubble-ui
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cilium
+  namespace: kube-system
+specs:
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: hubble-relay
+    ingress:
+    - fromEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: hubble-ui
+    egress:
+    - toEntities:
+      - host
+      - remote-node
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: hubble-ui
+    ingress:
+    - fromEndpoints:
+      - matchLabels:
+          k8s:io.kubernetes.pod.namespace: ingress-nginx
+          io.cilium.k8s.policy.serviceaccount: ingress-nginx
+    egress:
+    - toEntities:
+      - kube-apiserver
+    - toEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: hubble-relay
+{{- end -}}

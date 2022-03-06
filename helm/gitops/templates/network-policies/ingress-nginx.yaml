@@ -23,9 +23,6 @@ spec:
     - kube-apiserver
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.pod.namespace: kube-system
-        io.cilium.k8s.policy.serviceaccount: hubble-ui
-    - matchLabels:
         k8s:io.kubernetes.pod.namespace: argocd
         io.cilium.k8s.policy.serviceaccount: argocd-server
     - matchLabels:
