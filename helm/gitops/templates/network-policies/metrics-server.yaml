@@ -1,0 +1,14 @@
+{{- if .Values.applications.metricsServer.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: metrics-server
+  namespace: kube-system
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: metrics-server
+  egress:
+    - toEntities:
+        - kube-apiserver
+{{- end -}}
