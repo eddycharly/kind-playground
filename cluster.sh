@@ -116,6 +116,8 @@ cluster(){
 
   log "CLUSTER ..."
 
+  docker pull $KIND_NODE_IMAGE
+
   kind create cluster --name $NAME --image $KIND_NODE_IMAGE --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4

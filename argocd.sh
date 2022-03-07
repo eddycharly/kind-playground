@@ -25,6 +25,9 @@ redis:
   enabled: true
 redis-ha:
   enabled: false
+repoServer:
+  serviceAccount:
+    create: true
 server:
   volumeMounts:
     - mountPath: /etc/ssl/certs/root-ca.pem
