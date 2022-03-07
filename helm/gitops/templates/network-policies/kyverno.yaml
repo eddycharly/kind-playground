@@ -1,0 +1,18 @@
+{{- if .Values.applications.kyverno.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: kyverno
+  namespace: kyverno
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: kyverno
+  ingress:
+    - fromEntities:
+        - host
+        - remote-node
+  egress:
+    - toEntities:
+        - kube-apiserver
+{{- end -}}

@@ -32,9 +32,9 @@ applications:
   kubeview:
     enabled: true
   kyverno:
-    enabled: false
+    enabled: true
   kyvernoPolicies:
-    enabled: false
+    enabled: true
   metricsServer:                        
     enabled: true
   nodeProblemDetector:
