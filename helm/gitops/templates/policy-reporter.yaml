@@ -19,6 +19,8 @@ spec:
           enabled: true
           plugins:
             kyverno: true
+          serviceAccount:
+            create: true
           ingress:
             enabled: true
             annotations:

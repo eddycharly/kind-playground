@@ -12,8 +12,7 @@ spec:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: kyverno
-            app.kubernetes.io/instance: policy-reporter
-            app.kubernetes.io/name: ui
+            io.cilium.k8s.policy.serviceaccount: policy-reporter-ui
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -23,8 +22,7 @@ metadata:
 specs:
   - endpointSelector:
       matchLabels:
-        app.kubernetes.io/instance: policy-reporter
-        app.kubernetes.io/name: ui
+        io.cilium.k8s.policy.serviceaccount: policy-reporter-ui
     ingress:
       - fromEndpoints:
           - matchLabels:
@@ -47,8 +45,7 @@ specs:
     ingress:
       - fromEndpoints:
           - matchLabels:
-              app.kubernetes.io/instance: policy-reporter
-              app.kubernetes.io/name: ui
+              io.cilium.k8s.policy.serviceaccount: policy-reporter-ui
     egress:
       - toEntities:
           - kube-apiserver
@@ -58,13 +55,11 @@ specs:
     ingress:
       - fromEndpoints:
           - matchLabels:
-              app.kubernetes.io/instance: policy-reporter
-              app.kubernetes.io/name: ui
+              io.cilium.k8s.policy.serviceaccount: policy-reporter-ui
     egress:
       - toEntities:
           - kube-apiserver
       - toEndpoints:
           - matchLabels:
-              app.kubernetes.io/instance: policy-reporter
-              app.kubernetes.io/name: ui
+              io.cilium.k8s.policy.serviceaccount: policy-reporter-ui
 {{- end -}}
