@@ -14,8 +14,8 @@ spec:
             k8s:io.kubernetes.pod.namespace: argocd
             io.cilium.k8s.policy.serviceaccount: argocd-server
         - matchLabels:
-            app.kubernetes.io/name: argocd-repo-server
             k8s:io.kubernetes.pod.namespace: argocd
+            io.cilium.k8s.policy.serviceaccount: argocd-repo-server
   egress:
     - toEndpoints:
         - matchLabels:
@@ -59,7 +59,7 @@ specs:
           - kube-apiserver
   - endpointSelector:
       matchLabels:
-        app.kubernetes.io/name: argocd-repo-server
+        io.cilium.k8s.policy.serviceaccount: argocd-repo-server
     egress:
       - toEntities:
           - world

@@ -29,6 +29,8 @@ spec:
             serviceMonitor:
               enabled: {{ .Values.prometheus.operator.enabled }}
         repoServer:
+          serviceAccount:
+            create: true
           metrics:
             enabled: true
             serviceMonitor:
