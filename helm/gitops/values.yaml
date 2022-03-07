@@ -42,6 +42,6 @@ applications:
   polaris:
     enabled: true
   policyReporter:
-    enabled: false
+    enabled: true
   rbacManager:
     enabled: true

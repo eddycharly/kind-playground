@@ -1,0 +1,70 @@
+{{- if .Values.applications.policyReporter.enabled -}}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: policy-reporter
+  namespace: ingress-nginx
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: ingress-nginx
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kyverno
+            app.kubernetes.io/instance: policy-reporter
+            app.kubernetes.io/name: ui
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: policy-reporter
+  namespace: kyverno
+specs:
+  - endpointSelector:
+      matchLabels:
+        app.kubernetes.io/instance: policy-reporter
+        app.kubernetes.io/name: ui
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: ingress-nginx
+              io.cilium.k8s.policy.serviceaccount: ingress-nginx
+      - fromEndpoints:
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: policy-reporter
+    egress:
+      - toEntities:
+          - world
+      - toEndpoints:
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: policy-reporter
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: policy-reporter-kyverno-plugin
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: policy-reporter-kyverno-plugin
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              app.kubernetes.io/instance: policy-reporter
+              app.kubernetes.io/name: ui
+    egress:
+      - toEntities:
+          - kube-apiserver
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: policy-reporter
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              app.kubernetes.io/instance: policy-reporter
+              app.kubernetes.io/name: ui
+    egress:
+      - toEntities:
+          - kube-apiserver
+      - toEndpoints:
+          - matchLabels:
+              app.kubernetes.io/instance: policy-reporter
+              app.kubernetes.io/name: ui
+{{- end -}}
